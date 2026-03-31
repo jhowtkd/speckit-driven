@@ -1,0 +1,49 @@
+{
+  "name": "spec-driven-kit",
+  "version": "1.0.0",
+  "description": "Installable Spec-Driven Coding MVP kit for Cursor: constitutions, templates, prompts, and CLI.",
+  "license": "MIT",
+  "author": "Jhonatan",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jhowtkd/speckit-driven.git"
+  },
+  "homepage": "https://github.com/jhowtkd/speckit-driven#readme",
+  "bugs": {
+    "url": "https://github.com/jhowtkd/speckit-driven/issues"
+  },
+  "type": "commonjs",
+  "keywords": [
+    "cursor",
+    "spec-driven",
+    "cli",
+    "templates"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "bin": {
+    "spec-driven-kit": "bin/spec-driven-kit.js"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "assets",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "dev": "tsc --watch",
+    "pretest": "npm run build",
+    "test": "node --test dist/test/**/*.js"
+  },
+  "dependencies": {
+    "commander": "^12.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "typescript": "^5.8.2"
+  }
+}
