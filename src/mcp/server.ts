@@ -246,10 +246,7 @@ export async function startElfMcpServer(): Promise<void> {
       case "elf_status":
         server.registerTool(
           tool.name,
-          {
-            description: tool.description,
-            inputSchema: z.object({}),
-          },
+          { description: tool.description },
           async () => callTool(cwd, tool.name, {})
         );
         break;

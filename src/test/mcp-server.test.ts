@@ -57,6 +57,14 @@ test("elf mcp serve completes an MCP handshake and lists tools", async () => {
         "elf_status",
       ]
     );
+
+    const status = await client.callTool({ name: "elf_status" });
+    const content = status.content as Array<{ type: "text"; text: string }>;
+    assert.ok(content.length > 0, "expected a text result");
+    const payload = content[0];
+    assert.equal(payload.type, "text");
+    const parsed = JSON.parse(payload.text) as { initialized?: boolean };
+    assert.equal(parsed.initialized, false);
   } finally {
     await transport.close();
   }
