@@ -1,0 +1,7 @@
+schemaVersion = 1
+runtime = "elf"
+version = "1"
+defaultWorkflow = "phase"
+workflowsDir = "workflows"
+templatesDir = "templates"
+stateDir = "state"
