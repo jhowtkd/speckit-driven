@@ -1,0 +1,38 @@
+---
+description: >-
+  Use quando spec, plan e tasks já estiverem aprovados. Execute na ordem,
+  registre decisões e mantenha rastreabilidade real.
+alwaysApply: false
+---
+
+# Executing plan
+
+## Objetivo
+
+Implementar a feature sem drift de escopo e sem perder rastreabilidade.
+
+## Arquivos de referência
+
+- `.cursor/features/<FEATURE_ID>/spec.md`
+- `.cursor/features/<FEATURE_ID>/plan.md`
+- `.cursor/features/<FEATURE_ID>/tasks.md`
+- `.cursor/features/<FEATURE_ID>/state.json`
+- `.cursor/features/<FEATURE_ID>/decision-log.md` quando fizer sentido
+
+## Regras de execução
+
+- Siga as tasks em ordem.
+- Registre decisões relevantes em `decision-log.md`.
+- Mantenha `state.json` verdadeiro e atualizado.
+- Se a realidade mudar, atualize os docs.
+
+## Não faça
+
+- Não pule ou reordene tasks sem justificar.
+- Não expanda escopo sem atualizar spec/plan/tasks.
+- Não marque task como done sem evidência verificável.
+
+## Resultado esperado
+
+Implementação completa, com checkpoints e estado honesto, pronta para
+`50-verification-before-completion`.

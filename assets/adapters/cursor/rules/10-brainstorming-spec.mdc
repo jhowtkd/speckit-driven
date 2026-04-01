@@ -1,0 +1,39 @@
+---
+description: >-
+  Use quando a solicitação estiver ambígua, o escopo ainda não estiver claro ou
+  não existir spec. Estruture a spec antes de partir para plan/tasks/código.
+alwaysApply: false
+---
+
+# Brainstorming e spec
+
+## Objetivo
+
+Produzir ou refinar um `spec.md` claro e verificável para a feature.
+
+## Quando usar
+
+Use quando houver:
+
+- ambiguidade relevante;
+- mudança de escopo com impacto médio ou maior;
+- risco técnico material;
+- necessidade de alinhar intenções antes de planejar.
+
+## Instruções
+
+1. Leia `spec.md` em `.cursor/features/<FEATURE_ID>/`.
+2. Crie ou refine contexto, problema, objetivo, escopo, fora de escopo e critérios de aceite.
+3. Liste perguntas críticas e incertezas restantes.
+4. Faça a checagem de constituição e proponha ajustes objetivos na spec, se preciso.
+
+## Regras
+
+- Foque no quê e no porquê.
+- Não escreva `plan.md` nem `tasks.md` aqui.
+- Não implemente código.
+- Aceite precisa ser verificável.
+
+## Resultado esperado
+
+Um `spec.md` suficiente para seguir para `30-writing-plan`.

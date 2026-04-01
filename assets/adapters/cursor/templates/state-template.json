@@ -1,0 +1,28 @@
+{
+  "feature_id": "{{FEATURE_ID}}",
+  "status": "spec",
+  "research_required": false,
+  "verification_score": 0,
+  "current_checkpoint": "",
+  "blocked": false,
+  "last_updated": "{{CREATED_AT}}",
+  "artifacts": {
+    "constitution": true,
+    "spec": false,
+    "plan": false,
+    "tasks": false,
+    "research": false,
+    "verification": false,
+    "decision_log": false
+  },
+  "progress": {
+    "spec": false,
+    "clarify": false,
+    "research": false,
+    "plan": false,
+    "tasks": false,
+    "execute": false,
+    "verify": false,
+    "final_review": false
+  }
+}

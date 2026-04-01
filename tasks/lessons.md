@@ -16,3 +16,4 @@
 - For MCP servers, register tools through `McpServer.registerTool()` so the SDK advertises tool capability and wires `tools/list` and `tools/call` consistently.
 - If runtime code imports a package directly, declare it as a direct dependency even when a transitive copy is currently hoisted into `node_modules`.
 - For zero-input MCP tools, do not require `arguments: {}`; register them without an input schema and test `callTool({ name })` explicitly.
+- When a smoke test covers a migration path next to a legacy path, use a fresh temp directory for file-presence assertions so earlier subtests do not contaminate the adapter contract.

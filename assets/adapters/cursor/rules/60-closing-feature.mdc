@@ -1,0 +1,43 @@
+---
+description: >-
+  Use quando `verification.md` já existir. Faça a revisão final antes de
+  encerrar a feature.
+alwaysApply: false
+---
+
+# Closing the feature
+
+## Objetivo
+
+Revisar a feature de ponta a ponta e emitir o veredito final.
+
+## Arquivos de referência
+
+- `.cursor/features/<FEATURE_ID>/spec.md`
+- `.cursor/features/<FEATURE_ID>/plan.md`
+- `.cursor/features/<FEATURE_ID>/tasks.md`
+- `.cursor/features/<FEATURE_ID>/state.json`
+- `.cursor/features/<FEATURE_ID>/verification.md`
+- `.cursor/features/<FEATURE_ID>/decision-log.md` se existir
+
+## Checklist final
+
+- Spec atendida ou lacunas documentadas
+- Plan respeitado ou desvios justificados
+- Tasks concluídas ou pendências registradas
+- Testes proporcionais ao risco executados ou justificados
+- Verification >= 90
+- `state.json` atualizado
+- Output revisável
+- Sem blocker crítico aberto
+
+## Veredito
+
+- Completed
+- Completed with caveats
+- Needs revision
+- Not completed
+
+## Resultado esperado
+
+Veredito claro para decidir o encerramento da feature.

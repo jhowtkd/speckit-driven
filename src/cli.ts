@@ -11,6 +11,9 @@ import { runInstall } from "./commands/install";
 import { runDoctorCmd } from "./commands/doctor";
 import { runUpdate } from "./commands/update";
 import { runMcpServe } from "./commands/mcp-serve";
+import { runAdapterInstall } from "./commands/adapter-install";
+import { runAdapterUpdate } from "./commands/adapter-update";
+import { runAdapterDoctor } from "./commands/adapter-doctor";
 
 const packageRoot = getPackageRoot();
 const version = readKitVersion(packageRoot);
@@ -137,6 +140,45 @@ program
   .option("--force", "overwrite files that differ from the bundled kit")
   .action((opts: { force?: boolean }) => {
     runUpdate(process.cwd(), { force: Boolean(opts.force) });
+  });
+
+const adapter = program.command("adapter").description("Manage host adapters");
+adapter
+  .command("install <adapter>")
+  .description("Install an adapter bundle (cursor)")
+  .option("--force", "overwrite existing adapter files")
+  .option(
+    "--allow-anywhere",
+    "skip check for .git or package.json (use with care)"
+  )
+  .action((adapterName: string, opts: { force?: boolean; allowAnywhere?: boolean }) => {
+    runAdapterInstall(process.cwd(), adapterName, {
+      force: Boolean(opts.force),
+      allowAnywhere: Boolean(opts.allowAnywhere),
+    });
+  });
+
+adapter
+  .command("update <adapter>")
+  .description("Update an adapter bundle (cursor)")
+  .option("--force", "overwrite diverged adapter files")
+  .action((adapterName: string, opts: { force?: boolean }) => {
+    runAdapterUpdate(process.cwd(), adapterName, {
+      force: Boolean(opts.force),
+    });
+  });
+
+adapter
+  .command("doctor <adapter>")
+  .description("Validate an adapter bundle (cursor)")
+  .option(
+    "--strict",
+    "fail when file contents differ from the adapter bundle (default: warn on drift)"
+  )
+  .action((adapterName: string, opts: { strict?: boolean }) => {
+    runAdapterDoctor(process.cwd(), adapterName, {
+      strict: Boolean(opts.strict),
+    });
   });
 
 program.addHelpText(

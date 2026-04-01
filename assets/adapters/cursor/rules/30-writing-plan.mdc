@@ -1,0 +1,49 @@
+---
+description: >-
+  Use quando a spec já existir e a implementação for pedida. Produza `plan.md`
+  e `tasks.md` executáveis, sem codar ainda.
+alwaysApply: false
+---
+
+# Writing plan e tasks
+
+## Objetivo
+
+Definir a abordagem técnica e a ordem de execução de forma alinhada à spec.
+
+## Arquivos de referência
+
+- `.cursor/features/<FEATURE_ID>/spec.md`
+- `.cursor/features/<FEATURE_ID>/research.md` se existir
+
+## Arquivos alvo
+
+- `.cursor/features/<FEATURE_ID>/plan.md`
+- `.cursor/features/<FEATURE_ID>/tasks.md`
+
+## Regras
+
+1. O plan responde como fazer sem perder alinhamento com a spec.
+2. As tasks precisam ser acionáveis, ordenadas e verificáveis.
+3. Dependências e testes esperados devem ficar explícitos.
+4. A execução não começa antes de plan e tasks existirem.
+
+## Conteúdo do plan
+
+Inclua estratégia geral, partes impactadas, ordem de execução, trade-offs,
+riscos técnicos, estratégia de testes e critérios de simplificação.
+
+## Conteúdo das tasks
+
+Cada task deve ter: id, fase, descrição, responsável/agente, dependências,
+arquivos afetados, output esperado, testes esperados ou justificativa,
+checkpoint e status inicial.
+
+## Restrições
+
+- Não implemente código.
+- Não comprima tudo em uma task vaga.
+
+## Resultado esperado
+
+`plan.md` e `tasks.md` prontos para `40-executing-plan`.

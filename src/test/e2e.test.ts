@@ -37,6 +37,13 @@ test("E2E CLI Flow", async (t) => {
     assert.ok(existsSync(join(cwd, ".cursor", "rules", "00-using-spec-driven.mdc")));
   });
 
+  await t.test("adapter install cursor --allow-anywhere", () => {
+    const out = runCmd("adapter install cursor --allow-anywhere");
+    assert.match(out, /elf adapter install cursor/);
+    assert.ok(existsSync(join(cwd, ".cursor", "rules", "00-using-elf.mdc")));
+    assert.ok(existsSync(join(cwd, ".cursor", "commands", "spec-start.md")));
+  });
+
   await t.test("init bootstraps elf runtime", () => {
     const out = runCmd("init --allow-anywhere");
     assert.match(out, /elf init/);
