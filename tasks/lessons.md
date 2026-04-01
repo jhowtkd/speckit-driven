@@ -10,3 +10,4 @@
 - When a command handler throws for expected user mistakes, catch the error at the CLI boundary and print a clean message to stderr instead of leaking a Node stack trace.
 - In workflow routing, treat explicit review requests as review first, and only route to debug when the prompt clearly asks for incident investigation rather than a bounded fix.
 - In intent normalization, let `continue/resume` win before epic keywords when there is existing work, and surface explicit verification prompts as `verify-run` instead of falling back to generic task routing.
+- A loader that points at missing or corrupted on-disk state must return `null` or fail loudly, never synthesize a plausible record from a pointer file.

@@ -53,13 +53,6 @@ export function loadCurrentRun(cwd: string): RunRecord | null {
   try {
     return readRunArtifacts(cwd, pointer.runId);
   } catch {
-    return {
-      runId: pointer.runId,
-      workflowId: pointer.workflowId,
-      phaseId: pointer.phaseId,
-      status: pointer.status,
-      createdAt: pointer.updatedAt,
-      updatedAt: pointer.updatedAt,
-    };
+    return null;
   }
 }
