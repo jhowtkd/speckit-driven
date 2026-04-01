@@ -26,6 +26,7 @@
 
 - **Installable payload**: **`assets/cursor/`** (includes **`rules/*.mdc`**, **`commands/`**, **`templates/`**, etc.).
 - **Canonical `AGENTS.md` template**: **`agents/AGENTS.md`** in the package (also listed in npm `"files"`).
+- **Human constitution**: **`docs/constitution.md`** only; not part of the installed bundle.
 
 ## Optional feature scaffold
 

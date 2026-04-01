@@ -12,7 +12,7 @@
 
 - Ship a **spec-driven workflow** for Cursor using **documented, stable surfaces** first.
 - Match **Superpowers-style** practical behavior where it does **not** depend on private or fragile mechanisms.
-- Make **`.cursor/rules/*.mdc`** the operational core; use **`AGENTS.md` at the repository root** as a simple fallback.
+- Make **`.cursor/rules/*.mdc`** the operational core; use **`AGENTS.md` at the repository root** as a simple fallback. Human onboarding lives in **`docs/constitution.md`** only.
 - Keep the **npm CLI** as **installer / updater / doctor only** (`install`, `update`, `doctor`; `init` remains a **temporary alias** for `install`).
 - Optimize for **open-source adoption**, clarity, and stability: short, modular files.
 
@@ -84,7 +84,7 @@ Canonical **methodology** remains:
 ### 3.1 `00-using-spec-driven.mdc`
 
 - **`alwaysApply: true`**
-- **Content source:** Current `runtime-constitution.md` (gates, flow, artifacts, verification rubric, anti-patterns), plus early **principles check** aligned with former `01-constitution-check.md` when a feature draft exists.
+- **Content source:** Current rule set (`00`–`60`) plus early principles check aligned with `docs/constitution.md` when a feature draft exists.
 - **Hard gates (mandatory wording in the rule):**
   - **No implementation** without:
     - a **concrete** `plan.md`, and
@@ -166,7 +166,7 @@ Do not:
 
 ### 3.9 Legacy skill stub
 
-- Remove dependency on **`~/.agents/skills/spec-driven-framework`**. Replace with in-repo **rules + AGENTS.md**; optional minimal skill that only points to `.cursor/rules` if still desired.
+- Remove dependency on **`~/.agents/skills/spec-driven-framework`**. Replace with in-repo **rules + AGENTS.md**; do not ship a legacy skill stub in v1.
 
 ---
 

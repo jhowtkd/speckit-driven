@@ -40,6 +40,19 @@ Validate the feature with the official rubric and decide if it may be **closed**
 3. List open gaps.
 4. Give a clear verdict.
 
+## Evidence standard for high scores
+
+Do not assign high verification scores based on confidence, intuition, or code inspection alone when executable validation is reasonably possible.
+
+If runnable checks, direct reviewable artifacts, or concrete validation steps are available, use them.
+High scores require strong evidence, not optimistic interpretation.
+
+## Minimum honesty rule
+
+If verification is partial, say so explicitly.
+If important checks were not performed, that must reduce the score.
+Do not treat unverified assumptions as validated outcomes.
+
 ## Completion rule
 
 The feature is **not** complete unless **total score ≥ 90**. If below 90, plan explicit rework and re-verify.

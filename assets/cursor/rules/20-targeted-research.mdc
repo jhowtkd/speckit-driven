@@ -11,6 +11,17 @@ alwaysApply: false
 
 Produce **`research.md`** that reduces technical risk and informs **`plan.md`** — without endless study.
 
+## Required research outcome
+
+Research must end with implementation-relevant decisions, not just findings.
+
+The outcome must explicitly state:
+
+- what was learned
+- which options were accepted or rejected
+- whether the result changes the spec, the plan, both, or neither
+- what should happen next
+
 ## Target file
 
 - `.cursor/features/<FEATURE_ID>/research.md`
@@ -42,6 +53,9 @@ Skip or keep minimal for small, well-understood changes (per **`00-using-spec-dr
 1. Research only enough to remove **material** uncertainty.
 2. Convert findings into **practical decisions**.
 3. State explicitly what changes because of research.
+4. Separate internal codebase research from external research when relevant.
+5. Do not perform research for its own sake.
+6. Stop when the remaining uncertainty is no longer decision-critical.
 
 ## Restrictions
 

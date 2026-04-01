@@ -39,7 +39,7 @@ Sprint 3: commands/, scripts/, examples/, OSS docs, CODEOWNERS, CI validator
 **Steps:**
 
 1. Add valid YAML frontmatter per Cursor Project Rules (`description` where Agent Requested; `alwaysApply: true` only on `00-*`).
-2. Migrate text from `assets/cursor/runtime-constitution.md`, `prompts/*.md` per spec §3; embed **§1.4 semi-strict** profile in `00`.
+2. Migrate text from the current rule set and prompts/commands coverage per spec §3; embed **§1.4 semi-strict** profile in `00`.
 3. Enforce hard gates from spec (plan + tasks before implementation; create missing artifacts from templates).
 4. Add Agent Requested “Use when:” blocks for `10`, `20`, `30`.
 5. Add execution subsection in `40` per spec §3.5.
@@ -56,7 +56,7 @@ Sprint 3: commands/, scripts/, examples/, OSS docs, CODEOWNERS, CI validator
 **Files:**
 
 - Create: `agents/AGENTS.md` (English, short: precedence user > rules > default; pointer to `.cursor/rules`; when to use spec-driven; link `docs/constitution.md`).
-- Create: `docs/constitution.md` (English, human onboarding only—migrate/slim from `assets/cursor/constitution.md` ideas without duplicating gates that live in `00`).
+- Create: `docs/constitution.md` (English, human onboarding only—keep the human constitution in docs, not in the install bundle).
 
 **Acceptance:** Single canonical source for `AGENTS.md`; no second editable copy elsewhere in repo.
 
@@ -81,7 +81,7 @@ Sprint 3: commands/, scripts/, examples/, OSS docs, CODEOWNERS, CI validator
 **Files:**
 
 - Remove or archive: `assets/cursor/prompts/*` once rules + commands cover flows (or keep read-only copy under `docs/legacy/` **only** if needed for attribution—prefer delete to avoid dual source).
-- Replace: `assets/cursor/skills/spec-driven-mvp/SKILL.md` with minimal stub pointing to `.cursor/rules` and `AGENTS.md` **or** remove skill from bundle if redundant.
+- Remove: `assets/cursor/skills/spec-driven-mvp/SKILL.md` if redundant, since rules + `AGENTS.md` are the official surfaces.
 
 **Acceptance:** No reference to `~/.agents/skills/spec-driven-framework`.
 

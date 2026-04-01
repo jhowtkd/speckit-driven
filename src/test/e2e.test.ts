@@ -1,7 +1,13 @@
 import test from "node:test";
 import assert from "node:assert";
 import { execSync, spawnSync } from "child_process";
-import { mkdtempSync, existsSync, rmSync, readFileSync } from "fs";
+import {
+  mkdtempSync,
+  existsSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
 
@@ -30,14 +36,35 @@ test("E2E CLI Flow", async (t) => {
     const out = runCmd("install --allow-anywhere");
     assert.match(out, /Wrote \.cursor\/spec-driven-kit\.json/);
     assert.ok(existsSync(join(cwd, ".cursor", "spec-driven-kit.json")));
-    assert.ok(existsSync(join(cwd, ".cursor", "constitution.md")));
     assert.ok(existsSync(join(cwd, "AGENTS.md")));
     assert.ok(existsSync(join(cwd, ".cursor", "rules", "00-using-spec-driven.mdc")));
+    assert.ok(existsSync(join(cwd, ".cursor", "commands", "spec-start.md")));
   });
 
   await t.test("doctor --strict on fresh install", () => {
     const out = runCmd("doctor --strict");
     assert.match(out, /Result: OK/);
+  });
+
+  await t.test("doctor --strict fails on bundled drift", () => {
+    const rulePath = join(cwd, ".cursor", "rules", "00-using-spec-driven.mdc");
+    const original = readFileSync(rulePath, "utf8");
+    try {
+      writeFileSync(rulePath, `${original}\n<!-- drift -->\n`);
+      const result = spawnSync(
+        process.execPath,
+        [binPath, "doctor", "--strict"],
+        { cwd, encoding: "utf8" }
+      );
+      assert.strictEqual(result.status, 1, result.stderr ?? result.stdout);
+      assert.match(String(result.stdout), /Drift \(strict/);
+      assert.match(
+        String(result.stdout),
+        /Content differs from installed kit: \.cursor\/rules\/00-using-spec-driven\.mdc/
+      );
+    } finally {
+      writeFileSync(rulePath, original);
+    }
   });
 
   await t.test("update on identical files", () => {

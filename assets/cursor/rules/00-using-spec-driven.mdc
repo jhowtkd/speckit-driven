@@ -21,16 +21,45 @@ Apply **full spec-driven discipline** (mandatory artifacts, phases, clarify/rese
 - scope is **medium or larger** (multi-file, new behavior, or non-trivial behavior change);
 - **technical risk** is material (new integration, unfamiliar subsystem, security- or data-sensitive change).
 
+## Trivial work exception
+
+If the requested change is truly trivial, you may use a short inline micro-spec instead of creating a full feature folder.
+
+A change is only trivial when all of the following are true:
+
+- low ambiguity
+- low technical risk
+- limited scope
+- no meaningful architecture or workflow impact
+- can reasonably be completed and verified without multi-step coordination
+
+For trivial work, the micro-spec must still state:
+
+- what is changing
+- what is not changing
+- how success will be checked
+
+If triviality is unclear, do not treat the work as trivial.
+Create or use a feature folder instead.
+
 ## Mandatory flow
 
 `Constitution (human doc) → Spec → Clarify (if needed) → Research (if needed) → Plan → Tasks → Execute → Verify → Final Review`
+
+## Feature identity
+
+If substantial work is requested and no `FEATURE_ID` is provided, derive a short, stable `FEATURE_ID` from the request before proceeding.
+
+Use the feature folder workflow for non-trivial work.
+Do not skip feature identity when the work requires persistent artifacts.
 
 ## Hard gates
 
 - **No code / implementation** before a clear **`spec.md`** for the feature.
 - **Implementation must not start** without:
-  - a **concrete** **`plan.md`**, and
-  - **explicit, ordered, actionable** tasks in **`tasks.md`**.
+  - a **concrete** **`plan.md`**,
+  - **explicit, ordered, actionable** tasks in **`tasks.md`**, and
+  - either a **feature folder with required artifacts** or a valid **inline micro-spec** for trivial work.
 - **No execution** before **plan** and **tasks** exist and are aligned with the spec.
 - **No completion** before **verification score ≥ 90** (see rule `50`).
 - **No hidden scope expansion** — update spec/plan/tasks (and decision log if relevant).

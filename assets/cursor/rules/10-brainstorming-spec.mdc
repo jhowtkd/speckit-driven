@@ -11,6 +11,21 @@ alwaysApply: false
 
 Produce or refine a **clear, operational `spec.md`** without premature implementation, architecture deep-dive, or task breakdown.
 
+## Sufficiency standard
+
+A spec is sufficient when it is clear enough to support planning without guesswork.
+
+At minimum, the spec must make these points clear:
+
+- user or system goal
+- scope boundaries
+- key flows or behaviors
+- acceptance criteria
+- notable constraints or unknowns
+
+Do not continue refining the spec once these points are clear enough for an ordered plan.
+Keep the spec proportional to the size and risk of the change.
+
 ## Target file
 
 - `.cursor/features/<FEATURE_ID>/spec.md`
@@ -30,6 +45,9 @@ Per **`00-using-spec-driven`**, use the full spec/clarify loop when ambiguity, m
 
 - Focus on **what** and **why**, not deep **how** yet.
 - Acceptance criteria must be **verifiable**.
+- Avoid over-specification.
+- Do not turn brainstorming into full implementation planning.
+- Do not produce excessive detail that belongs in `plan.md` or `tasks.md`.
 - Do **not** write `plan.md` or `tasks.md` in this phase.
 - Do **not** implement code.
 

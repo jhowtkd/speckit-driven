@@ -23,6 +23,21 @@ Implement the feature per **`spec.md`**, **`plan.md`**, and **`tasks.md`** witho
 - Follow tasks **strictly in order**. Do not skip or reorder without **documented justification** (state + decision log or spec/plan update).
 - **Log meaningful decisions** in **`decision-log.md`** when trade-offs, approach changes, or structural adjustments matter (see prompts pattern: date, decision, context, alternatives, rationale, impact).
 - **Update `state.json` continuously** to reflect real progress, blockers, and verification score — no fictional progress.
+- **Update task status in `tasks.md`** as execution progresses.
+- Keep task-level progress aligned with `state.json` and `decision-log.md` when relevant.
+- If order changes materially, record the reason and update the plan or tasks accordingly.
+
+## Verifiable output
+
+Verifiable output means a concrete artifact that can be directly reviewed.
+
+Examples:
+
+- code change
+- config change
+- test change
+- documentation change
+- generated artifact explicitly required by the workflow
 
 ## Do not
 
@@ -30,6 +45,7 @@ Implement the feature per **`spec.md`**, **`plan.md`**, and **`tasks.md`** witho
 - Expand scope without updating **spec**, **plan**, and **tasks** (and **decision-log** when relevant).
 - Mark a task **done** without verifiable output and evidence.
 - Introduce complexity without justification.
+- Claim progress based only on intention, reasoning, or implied completion.
 
 ## Rules
 
