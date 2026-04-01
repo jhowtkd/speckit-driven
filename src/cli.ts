@@ -181,6 +181,47 @@ adapter
     });
   });
 
+const runUnimplementedGlobalCommand = (commandName: string, host: string) => {
+  console.error(`ELF global ${commandName} ${host} is not implemented yet.`);
+  process.exit(1);
+};
+
+const global = program
+  .command("global")
+  .description("Manage host-global ELF installs for Codex and Cursor");
+
+global
+  .command("install <host>")
+  .description("Install host-global ELF setup (codex, cursor, all)")
+  .action((host: string) => {
+    runUnimplementedGlobalCommand("install", host);
+  });
+
+global
+  .command("update <host>")
+  .description("Update host-global ELF setup (codex, cursor, all)")
+  .action((host: string) => {
+    runUnimplementedGlobalCommand("update", host);
+  });
+
+global
+  .command("doctor <host>")
+  .description("Validate host-global ELF setup (codex, cursor, all)")
+  .option(
+    "--strict",
+    "fail when global host files or entries differ from the managed ELF install"
+  )
+  .action((host: string) => {
+    runUnimplementedGlobalCommand("doctor", host);
+  });
+
+global
+  .command("uninstall <host>")
+  .description("Remove host-global ELF setup (codex, cursor, all)")
+  .action((host: string) => {
+    runUnimplementedGlobalCommand("uninstall", host);
+  });
+
 program.addHelpText(
   "after",
   "\nRecommended entrypoint: elf init\n"
