@@ -3,9 +3,17 @@ import { join, relative } from "path";
 import { fileBuffersEqual, listFilesRecursive } from "../fs-utils";
 import { installBundleFiles, type InstallReport } from "../install-files";
 import { updateKitFiles, type UpdateReport } from "../update-assets";
-import { getPackageRoot } from "../paths";
+import {
+  getCodexGlobalAgentsDir,
+  getCodexGlobalHooksPath,
+  getCodexGlobalManifestPath,
+  getCodexGlobalRulesDir,
+  getCodexGlobalSkillsDir,
+  getPackageRoot,
+} from "../paths";
 import { readKitVersion } from "../versioning";
 import type { DoctorIssue } from "../doctor-check";
+import type { AdapterPlan, AdapterScope } from "./global-types";
 
 export type CodexSyncReport = {
   created: string[];
@@ -208,6 +216,46 @@ function getCodexAgentsTargetDir(cwd: string): string {
 
 function getCodexHooksTargetPath(cwd: string): string {
   return join(cwd, ".codex", "hooks.json");
+}
+
+export function describeCodexAdapter(options: {
+  cwd: string;
+  scope: AdapterScope;
+  homeDir?: string;
+}): AdapterPlan {
+  if (options.scope === "project") {
+    const installPaths = [
+      getCodexSkillsTargetDir(options.cwd),
+      getCodexRulesTargetDir(options.cwd),
+      getCodexAgentsTargetDir(options.cwd),
+      getCodexHooksTargetPath(options.cwd),
+    ];
+    return {
+      host: "codex",
+      scope: "project",
+      installPaths,
+      doctorPaths: [...installPaths],
+      uninstallPaths: [...installPaths],
+      manifestPath: null,
+    };
+  }
+
+  const installPaths = [
+    getCodexGlobalSkillsDir(options.homeDir),
+    getCodexGlobalRulesDir(options.homeDir),
+    getCodexGlobalAgentsDir(options.homeDir),
+    getCodexGlobalHooksPath(options.homeDir),
+  ];
+  const manifestPath = getCodexGlobalManifestPath(options.homeDir);
+
+  return {
+    host: "codex",
+    scope: "global",
+    installPaths,
+    doctorPaths: [...installPaths, manifestPath],
+    uninstallPaths: [...installPaths, manifestPath],
+    manifestPath,
+  };
 }
 
 function hasCodexAdapterFootprint(cwd: string): boolean {

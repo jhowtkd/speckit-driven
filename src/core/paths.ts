@@ -51,6 +51,10 @@ export function getCodexGlobalAgentsDir(homeDir?: string): string {
   return join(getCodexGlobalDir(homeDir), "agents");
 }
 
+export function getCodexGlobalHooksPath(homeDir?: string): string {
+  return join(getCodexGlobalDir(homeDir), "hooks.json");
+}
+
 export function getCursorGlobalDir(homeDir?: string): string {
   return join(resolveHomeDir(homeDir), ".cursor");
 }

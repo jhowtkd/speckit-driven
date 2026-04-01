@@ -6,6 +6,13 @@ import { updateKitFiles, writeKitMeta, type UpdateReport } from "../update-asset
 import { getPackageRoot } from "../paths";
 import { readInstalledKitMeta, readKitVersion } from "../versioning";
 import type { DoctorIssue } from "../doctor-check";
+import type { AdapterPlan, AdapterScope } from "./global-types";
+import {
+  getCursorGlobalHooksPath,
+  getCursorGlobalManifestPath,
+  getCursorGlobalMcpPath,
+  getCursorGlobalRulesDir,
+} from "../paths";
 
 const LEGACY_CURSOR_ADAPTER_FILES = ["rules/00-using-spec-driven.mdc"];
 
@@ -38,6 +45,40 @@ export function getCursorAdapterAssetsDir(): string {
 
 export function getCursorAdapterTargetDir(cwd: string): string {
   return join(cwd, ".cursor");
+}
+
+export function describeCursorAdapter(options: {
+  cwd: string;
+  scope: AdapterScope;
+  homeDir?: string;
+}): AdapterPlan {
+  if (options.scope === "project") {
+    const targetDir = getCursorAdapterTargetDir(options.cwd);
+    return {
+      host: "cursor",
+      scope: "project",
+      installPaths: [targetDir],
+      doctorPaths: [targetDir],
+      uninstallPaths: [targetDir],
+      manifestPath: null,
+    };
+  }
+
+  const installPaths = [
+    getCursorGlobalRulesDir(options.homeDir),
+    getCursorGlobalMcpPath(options.homeDir),
+    getCursorGlobalHooksPath(options.homeDir),
+  ];
+  const manifestPath = getCursorGlobalManifestPath(options.homeDir);
+
+  return {
+    host: "cursor",
+    scope: "global",
+    installPaths,
+    doctorPaths: [...installPaths, manifestPath],
+    uninstallPaths: [...installPaths, manifestPath],
+    manifestPath,
+  };
 }
 
 function removeLegacyCursorAdapterFiles(targetDir: string): string[] {
