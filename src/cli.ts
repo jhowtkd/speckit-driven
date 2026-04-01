@@ -142,10 +142,10 @@ program
     runUpdate(process.cwd(), { force: Boolean(opts.force) });
   });
 
-const adapter = program.command("adapter").description("Manage host adapters");
+const adapter = program.command("adapter").description("Manage Cursor and Codex adapters");
 adapter
   .command("install <adapter>")
-  .description("Install an adapter bundle (cursor)")
+  .description("Install an adapter bundle (cursor, codex)")
   .option("--force", "overwrite existing adapter files")
   .option(
     "--allow-anywhere",
@@ -160,7 +160,7 @@ adapter
 
 adapter
   .command("update <adapter>")
-  .description("Update an adapter bundle (cursor)")
+  .description("Update an adapter bundle (cursor, codex)")
   .option("--force", "overwrite diverged adapter files")
   .action((adapterName: string, opts: { force?: boolean }) => {
     runAdapterUpdate(process.cwd(), adapterName, {
@@ -170,7 +170,7 @@ adapter
 
 adapter
   .command("doctor <adapter>")
-  .description("Validate an adapter bundle (cursor)")
+  .description("Validate an adapter bundle (cursor, codex)")
   .option(
     "--strict",
     "fail when file contents differ from the adapter bundle (default: warn on drift)"

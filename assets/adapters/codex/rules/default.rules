@@ -1,0 +1,7 @@
+# Codex defaults for the ELF runtime
+
+- Treat `.elf/` as the source of truth for workflow state.
+- Use `elf init` before starting a run if the runtime is missing.
+- Use `elf run`, `elf resume`, `elf review`, and `elf verify` for workflow actions.
+- Use `elf mcp serve` when Codex needs the local MCP bridge.
+- Do not reimplement workflow semantics in Codex prompts or rules.
