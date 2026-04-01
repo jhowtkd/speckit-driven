@@ -49,16 +49,38 @@ test("elf adapter install cursor writes the Cursor adapter bundle", () => {
       "utf8"
     );
     assert.match(usingRule, /elf init/);
-    assert.match(usingRule, /elf run/);
+    assert.match(usingRule, /elf phase start/);
     assert.match(usingRule, /elf mcp serve/);
 
     const startCommand = readFileSync(
       join(cwd, ".cursor", "commands", "spec-start.md"),
       "utf8"
     );
-    assert.match(startCommand, /elf init/);
-    assert.match(startCommand, /elf run/);
-    assert.match(startCommand, /elf mcp serve/);
+    assert.match(startCommand, /elf phase start/);
+
+    const planCommand = readFileSync(
+      join(cwd, ".cursor", "commands", "spec-plan.md"),
+      "utf8"
+    );
+    assert.match(planCommand, /elf phase plan/);
+
+    const executeCommand = readFileSync(
+      join(cwd, ".cursor", "commands", "spec-execute.md"),
+      "utf8"
+    );
+    assert.match(executeCommand, /elf phase execute/);
+
+    const verifyCommand = readFileSync(
+      join(cwd, ".cursor", "commands", "spec-verify.md"),
+      "utf8"
+    );
+    assert.match(verifyCommand, /elf phase verify/);
+
+    const closeCommand = readFileSync(
+      join(cwd, ".cursor", "commands", "spec-close.md"),
+      "utf8"
+    );
+    assert.match(closeCommand, /elf phase close/);
 
     assert.ok(existsSync(join(cwd, ".cursor", "constitution.md")));
     assert.equal(existsSync(join(cwd, "AGENTS.md")), false);

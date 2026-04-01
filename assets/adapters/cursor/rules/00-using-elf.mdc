@@ -13,25 +13,31 @@ fica no ELF.
 ## Runtime
 
 - `elf init` inicializa `.elf/`
-- `elf run` abre uma execução do workflow
+- `elf phase start` abre uma fase real da cadeia
+- `elf phase research` avança para research
+- `elf phase plan` avança para plan
+- `elf phase execute` avança para execute
+- `elf phase verify` avança para verify
+- `elf phase close` fecha a fase
 - `elf resume` retoma um run salvo
+- `elf phase status` mostra a etapa atual da fase
 - `elf review` gera a estrutura de revisão
 - `elf verify` grava a verificação do run
 - `elf mcp serve` expõe o bridge local para o Cursor
 
 ## Fluxo de trabalho
 
-Constitution → Spec → Clarify → Research → Plan → Tasks → Execute → Verify → Final Review
+Start → Research → Plan → Execute → Verify → Close
 
 ## Regras
 
 - Não trate `.cursor/rules` como runtime.
 - Não replique semântica de workflow fora do ELF.
-- Use `.cursor/features/<FEATURE_ID>/` e `.cursor/templates/` só para escrita guiada.
+- Use `.cursor/features/<FEATURE_ID>/` e `.cursor/templates/` só como suporte.
 - Mantenha o adapter fino e focado em instruções.
 
 ## Gates
 
-- Sem código antes de spec clara.
-- Sem execução antes de plan e tasks.
-- Sem conclusão antes de verification >= 90.
+- Sem execução antes de `elf phase plan`.
+- Sem verify antes de execute.
+- Sem close antes de verify.

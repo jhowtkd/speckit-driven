@@ -2,6 +2,13 @@
 
 - Treat `.elf/` as the source of truth for workflow state.
 - Use `elf init` before starting a run if the runtime is missing.
-- Use `elf run`, `elf resume`, `elf review`, and `elf verify` for workflow actions.
+- For `phase`, use the real chain:
+- `elf phase start`
+- `elf phase research`
+- `elf phase plan`
+- `elf phase execute`
+- `elf phase verify`
+- `elf phase close`
+- Use `elf review`, `elf resume`, and `elf phase status` to inspect progress.
 - Use `elf mcp serve` when Codex needs the local MCP bridge.
 - Do not reimplement workflow semantics in Codex prompts or rules.

@@ -39,6 +39,15 @@ export type RunStatus =
   | "completed"
   | "reopened";
 
+export type PhaseStep =
+  | "start"
+  | "research"
+  | "plan"
+  | "execute"
+  | "verify"
+  | "close"
+  | "done";
+
 export type RunEventType = "run-created" | "run-status-changed";
 
 export type RunEvent = {
@@ -65,6 +74,18 @@ export type PhaseRecord = {
   workflowId: string;
   createdAt: string;
   updatedAt: string;
+};
+
+export type PhaseFlowState = {
+  schemaVersion: 1;
+  phaseId: string;
+  runId: string;
+  workflowId: "phase";
+  title: string;
+  currentStep: PhaseStep;
+  completedSteps: Exclude<PhaseStep, "done">[];
+  status: Extract<RunStatus, "active" | "waiting-verification" | "completed">;
+  lastUpdatedAt: string;
 };
 
 export type CurrentRunRecord = {

@@ -22,8 +22,22 @@ test("elf adapter install codex writes the Codex adapter bundle", () => {
 
     assert.deepStrictEqual(
       readdirSync(join(cwd, ".agents", "skills")).sort(),
-      ["elf-review", "elf-run", "elf-verify"]
+      [
+        "elf-close",
+        "elf-execute",
+        "elf-plan",
+        "elf-research",
+        "elf-review",
+        "elf-run",
+        "elf-start",
+        "elf-verify",
+      ]
     );
+    assert.ok(existsSync(join(cwd, ".agents", "skills", "elf-start", "SKILL.md")));
+    assert.ok(existsSync(join(cwd, ".agents", "skills", "elf-research", "SKILL.md")));
+    assert.ok(existsSync(join(cwd, ".agents", "skills", "elf-plan", "SKILL.md")));
+    assert.ok(existsSync(join(cwd, ".agents", "skills", "elf-execute", "SKILL.md")));
+    assert.ok(existsSync(join(cwd, ".agents", "skills", "elf-close", "SKILL.md")));
     assert.ok(existsSync(join(cwd, ".agents", "skills", "elf-run", "SKILL.md")));
     assert.ok(existsSync(join(cwd, ".agents", "skills", "elf-review", "SKILL.md")));
     assert.ok(existsSync(join(cwd, ".agents", "skills", "elf-verify", "SKILL.md")));
@@ -35,8 +49,31 @@ test("elf adapter install codex writes the Codex adapter bundle", () => {
       join(cwd, ".agents", "skills", "elf-run", "SKILL.md"),
       "utf8"
     );
-    assert.match(runSkill, /elf init/);
-    assert.match(runSkill, /elf mcp serve/);
+    assert.match(runSkill, /elf phase start/);
+
+    const startSkill = readFileSync(
+      join(cwd, ".agents", "skills", "elf-start", "SKILL.md"),
+      "utf8"
+    );
+    assert.match(startSkill, /elf phase start/);
+
+    const researchSkill = readFileSync(
+      join(cwd, ".agents", "skills", "elf-research", "SKILL.md"),
+      "utf8"
+    );
+    assert.match(researchSkill, /elf phase research/);
+
+    const planSkill = readFileSync(
+      join(cwd, ".agents", "skills", "elf-plan", "SKILL.md"),
+      "utf8"
+    );
+    assert.match(planSkill, /elf phase plan/);
+
+    const executeSkill = readFileSync(
+      join(cwd, ".agents", "skills", "elf-execute", "SKILL.md"),
+      "utf8"
+    );
+    assert.match(executeSkill, /elf phase execute/);
 
     const reviewSkill = readFileSync(
       join(cwd, ".agents", "skills", "elf-review", "SKILL.md"),
@@ -49,20 +86,27 @@ test("elf adapter install codex writes the Codex adapter bundle", () => {
       join(cwd, ".agents", "skills", "elf-verify", "SKILL.md"),
       "utf8"
     );
-    assert.match(verifySkill, /elf verify/);
-    assert.match(verifySkill, /elf mcp serve/);
+    assert.match(verifySkill, /elf phase verify/);
+
+    const closeSkill = readFileSync(
+      join(cwd, ".agents", "skills", "elf-close", "SKILL.md"),
+      "utf8"
+    );
+    assert.match(closeSkill, /elf phase close/);
 
     const hooks = readFileSync(join(cwd, ".codex", "hooks.json"), "utf8");
     assert.match(hooks, /elf mcp serve/);
     assert.match(hooks, /elf init/);
 
     const rules = readFileSync(join(cwd, "codex", "rules", "default.rules"), "utf8");
-    assert.match(rules, /elf init/);
-    assert.match(rules, /elf mcp serve/);
+    assert.match(rules, /elf phase start/);
+    assert.match(rules, /elf phase plan/);
+    assert.match(rules, /elf phase execute/);
+    assert.match(rules, /elf phase verify/);
 
     const verifier = readFileSync(join(cwd, ".codex", "agents", "verifier.toml"), "utf8");
-    assert.match(verifier, /elf verify/);
-    assert.match(verifier, /elf mcp serve/);
+    assert.match(verifier, /elf phase verify/);
+    assert.match(verifier, /elf phase close/);
 
     const doctor = spawnSync(
       process.execPath,
@@ -103,8 +147,22 @@ test("elf adapter update codex repairs a missing adapter subtree", () => {
 
     assert.deepStrictEqual(
       readdirSync(join(cwd, ".agents", "skills")).sort(),
-      ["elf-review", "elf-run", "elf-verify"]
+      [
+        "elf-close",
+        "elf-execute",
+        "elf-plan",
+        "elf-research",
+        "elf-review",
+        "elf-run",
+        "elf-start",
+        "elf-verify",
+      ]
     );
+    assert.ok(existsSync(join(cwd, ".agents", "skills", "elf-start", "SKILL.md")));
+    assert.ok(existsSync(join(cwd, ".agents", "skills", "elf-research", "SKILL.md")));
+    assert.ok(existsSync(join(cwd, ".agents", "skills", "elf-plan", "SKILL.md")));
+    assert.ok(existsSync(join(cwd, ".agents", "skills", "elf-execute", "SKILL.md")));
+    assert.ok(existsSync(join(cwd, ".agents", "skills", "elf-close", "SKILL.md")));
     assert.ok(existsSync(join(cwd, ".agents", "skills", "elf-run", "SKILL.md")));
     assert.ok(existsSync(join(cwd, ".agents", "skills", "elf-review", "SKILL.md")));
     assert.ok(existsSync(join(cwd, ".agents", "skills", "elf-verify", "SKILL.md")));

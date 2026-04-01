@@ -1,10 +1,10 @@
 # Spec research
 
-Execute a etapa de research direcionado para a feature ativa.
+Avance a fase real para research e registre os achados no runtime.
 
 ## Instruções
 
-1. Confirme o `FEATURE_ID` e os caminhos em `.cursor/features/<FEATURE_ID>/`.
-2. Siga a regra `20-targeted-research`.
-3. Produza ou atualize `research.md` quando houver incerteza técnica material.
-4. Não avance para implementação sem refletir os achados na spec ou no plan.
+1. Rode `elf phase research <run-id>`.
+2. Confirme que o próximo passo virou `plan`.
+3. Produza ou atualize `.elf/phases/<phase-id>/research.md`.
+4. Não avance sem refletir os achados na spec ou no plan.

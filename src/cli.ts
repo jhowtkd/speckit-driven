@@ -18,6 +18,7 @@ import { runGlobalInstall } from "./commands/global-install";
 import { runGlobalUpdate } from "./commands/global-update";
 import { runGlobalDoctor } from "./commands/global-doctor";
 import { runGlobalUninstall } from "./commands/global-uninstall";
+import { runPhaseAction, runPhaseStart, runPhaseStatus } from "./commands/phase";
 
 const packageRoot = getPackageRoot();
 const version = readKitVersion(packageRoot);
@@ -100,6 +101,49 @@ program
   .action((runId: string) => {
     try {
       runVerify(process.cwd(), runId);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(message);
+      process.exit(1);
+    }
+  });
+
+const phase = program.command("phase").description("Drive the chained phase workflow");
+phase
+  .command("start")
+  .description("Start a real phase workflow and bootstrap its artifacts")
+  .requiredOption("--title <title>", "phase title")
+  .action((opts: { title?: string }) => {
+    try {
+      runPhaseStart(process.cwd(), String(opts.title ?? ""));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(message);
+      process.exit(1);
+    }
+  });
+
+for (const step of ["research", "plan", "execute", "verify", "close"] as const) {
+  phase
+    .command(`${step} <runId>`)
+    .description(`Advance a phase workflow through ${step}`)
+    .action((runId: string) => {
+      try {
+        runPhaseAction(process.cwd(), step, runId);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        console.error(message);
+        process.exit(1);
+      }
+    });
+}
+
+phase
+  .command("status <runId>")
+  .description("Show the current phase workflow step")
+  .action((runId: string) => {
+    try {
+      runPhaseStatus(process.cwd(), runId);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       console.error(message);

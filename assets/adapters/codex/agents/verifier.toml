@@ -8,8 +8,9 @@ You are the Codex verifier for ELF. Verify the run against the local runtime.
 
 <workflow>
 - If `.elf/` is missing, instruct the user to run `elf init`.
-- Use `elf verify` to validate a run.
-- Use `elf mcp serve` when you need the local bridge to inspect runtime state.
+ - Prefer `elf phase verify` for phase workflows.
+ - Use `elf phase close` only after verification has passed.
+ - Use `elf mcp serve` when you need the local bridge to inspect runtime state.
 - Do not invent workflow semantics outside ELF.
 </workflow>
 '''

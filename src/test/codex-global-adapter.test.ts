@@ -32,11 +32,21 @@ test("global Codex install writes the managed bundle and manifest", () => {
     installCodexGlobalAdapter({ homeDir, force: false });
 
     assert.deepEqual(readdirSync(getCodexGlobalSkillsDir(homeDir)).sort(), [
+      "elf-close",
+      "elf-execute",
+      "elf-plan",
+      "elf-research",
       "elf-review",
       "elf-run",
+      "elf-start",
       "elf-verify",
     ]);
     assert.ok(existsSync(join(getCodexGlobalSkillsDir(homeDir), "elf-run", "SKILL.md")));
+    assert.ok(existsSync(join(getCodexGlobalSkillsDir(homeDir), "elf-start", "SKILL.md")));
+    assert.ok(existsSync(join(getCodexGlobalSkillsDir(homeDir), "elf-research", "SKILL.md")));
+    assert.ok(existsSync(join(getCodexGlobalSkillsDir(homeDir), "elf-plan", "SKILL.md")));
+    assert.ok(existsSync(join(getCodexGlobalSkillsDir(homeDir), "elf-execute", "SKILL.md")));
+    assert.ok(existsSync(join(getCodexGlobalSkillsDir(homeDir), "elf-close", "SKILL.md")));
     assert.ok(existsSync(join(getCodexGlobalAgentsDir(homeDir), "verifier.toml")));
     assert.ok(existsSync(join(getCodexGlobalRulesDir(homeDir), "default.rules")));
     assert.ok(existsSync(getCodexGlobalHooksPath(homeDir)));
@@ -48,8 +58,13 @@ test("global Codex install writes the managed bundle and manifest", () => {
       ".codex/agents/verifier.toml",
       ".codex/hooks.json",
       ".codex/rules/default.rules",
+      ".codex/skills/elf-close",
+      ".codex/skills/elf-execute",
+      ".codex/skills/elf-plan",
+      ".codex/skills/elf-research",
       ".codex/skills/elf-review",
       ".codex/skills/elf-run",
+      ".codex/skills/elf-start",
       ".codex/skills/elf-verify",
     ]);
 

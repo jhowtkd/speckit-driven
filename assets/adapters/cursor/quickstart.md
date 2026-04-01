@@ -6,17 +6,17 @@
 ## Uso rápido
 
 1. Rode `elf init` para criar o runtime.
-2. Defina `FEATURE_ID` e crie `.cursor/features/<FEATURE_ID>/` se necessário.
-3. Use os comandos `spec-start`, `spec-plan`, `spec-research`, `spec-execute`,
-   `spec-verify` e `spec-close` dentro de `.cursor/commands/`.
-4. Use `elf run`, `elf resume`, `elf review`, `elf verify` e `elf mcp serve`
-   para a execução real.
+2. Inicie uma fase real com `elf phase start --title "<feature>"`.
+3. Use os comandos `spec-start`, `spec-research`, `spec-plan`,
+   `spec-execute`, `spec-verify` e `spec-close` como wrappers da cadeia.
+4. Use `elf phase status`, `elf review` e `elf mcp serve` para inspecionar o
+   progresso real.
 
 ## Resumo do fluxo
 
-Spec → Clarify → Research → Plan → Tasks → Execute → Verify → Final Review
+Start → Research → Plan → Execute → Verify → Close
 
 ## Lembrete
 
 Os arquivos em `.cursor/` orientam o Cursor; o estado vivo do workflow mora em
-`.elf/`.
+`.elf/phases/<phase-id>/`.

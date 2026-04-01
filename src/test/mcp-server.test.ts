@@ -2,6 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "child_process";
 import { join } from "path";
+import { mkdtempSync, rmSync } from "fs";
+import { tmpdir } from "os";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { buildElfMcpTools } from "../mcp/tools";
@@ -35,11 +37,12 @@ test("elf mcp exposes a serve subcommand", () => {
 test("elf mcp serve completes an MCP handshake and lists tools", async () => {
   const root = join(__dirname, "..", "..");
   const elfBin = join(root, "bin", "elf.js");
+  const cwd = mkdtempSync(join(tmpdir(), "elf-mcp-cwd-"));
 
   const transport = new StdioClientTransport({
     command: process.execPath,
     args: [elfBin, "mcp", "serve"],
-    cwd: root,
+    cwd,
     stderr: "pipe",
   });
   const client = new Client({ name: "elf-mcp-test", version: "1.0.0" });
@@ -67,5 +70,6 @@ test("elf mcp serve completes an MCP handshake and lists tools", async () => {
     assert.equal(parsed.initialized, false);
   } finally {
     await transport.close();
+    rmSync(cwd, { recursive: true, force: true });
   }
 });

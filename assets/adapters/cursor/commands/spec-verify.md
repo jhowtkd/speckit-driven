@@ -1,9 +1,9 @@
 # Spec verify
 
-Preencha a verificação e registre a nota final da feature.
+Avance a fase real para verify e registre a verificação no runtime.
 
 ## Instruções
 
-1. Siga a regra `50-verification-before-completion`.
-2. Complete `verification.md` com rubrica, evidências e veredito.
-3. Só marque como concluída se a nota final for >= 90.
+1. Rode `elf phase verify <run-id>`.
+2. Complete `.elf/phases/<phase-id>/verification.md` com evidências e veredito.
+3. Confirme que o próximo passo virou `close`.

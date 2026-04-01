@@ -1,10 +1,10 @@
 # Spec plan
 
-Prepare `plan.md` e `tasks.md` para a feature ativa.
+Avance a fase real para plan e escreva o plano executável.
 
 ## Instruções
 
-1. Confirme que `spec.md` existe e está suficiente.
-2. Siga a regra `30-writing-plan`.
-3. Produza `plan.md` e `tasks.md` com ordem, dependências e testes.
+1. Rode `elf phase plan <run-id>`.
+2. Confirme que o próximo passo virou `execute`.
+3. Produza `.elf/phases/<phase-id>/plan.md` e `.elf/phases/<phase-id>/tasks.md`.
 4. Não implemente código aqui.

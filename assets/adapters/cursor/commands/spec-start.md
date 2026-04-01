@@ -1,6 +1,6 @@
 # Spec start
 
-Bootstrap da feature antes das outras fases.
+Abra a cadeia real da fase no runtime ELF.
 
 ## Quando usar
 
@@ -9,20 +9,19 @@ não tiver os arquivos mínimos.
 
 ## Instruções
 
-1. Defina `FEATURE_ID`.
-2. Crie `.cursor/features/<FEATURE_ID>/` se ainda não existir.
-3. Copie os templates faltantes de `.cursor/templates/` para `spec.md`,
-   `plan.md`, `tasks.md` e `state.json`.
-4. Substitua os placeholders dos templates.
-5. Não escreva código nesta etapa.
+1. Rode `elf init` se `.elf/` ainda não existir.
+2. Inicie a fase com `elf phase start --title "<feature>"`.
+3. Capture o `run-id` e o `phase-id` retornados pelo runtime.
+4. Preencha `.elf/phases/<phase-id>/spec.md`.
+5. Use `elf phase status <run-id>` para confirmar que o próximo passo é `research`.
 
 ## Runtime ELF
 
-- Rode `elf init` para inicializar o runtime quando ele ainda não existir.
-- Use `elf run` para criar um run do workflow.
+- Use `elf phase start` como gatilho real da cadeia.
+- O estado vivo mora em `.elf/phases/<phase-id>/state.json`.
 - Use `elf mcp serve` para conectar o Cursor ao bridge local.
 
 ## Observação
 
-Este comando só prepara a escrita da feature. A autoridade do workflow vive no
-ELF, não nos rules do Cursor.
+Este comando não é mais só preparação textual. Ele deve abrir a fase real no
+ELF antes da escrita.

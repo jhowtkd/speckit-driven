@@ -47,6 +47,18 @@ export function getPhaseJsonPath(cwd: string, phaseId: string): string {
   return join(getPhaseDir(cwd, phaseId), "phase.json");
 }
 
+export function getPhaseArtifactPath(
+  cwd: string,
+  phaseId: string,
+  artifactName: string
+): string {
+  return join(getPhaseDir(cwd, phaseId), artifactName);
+}
+
+export function getPhaseStatePath(cwd: string, phaseId: string): string {
+  return getPhaseArtifactPath(cwd, phaseId, "state.json");
+}
+
 export function writeJsonFile(path: string, value: unknown): void {
   ensureDir(join(path, ".."));
   writeFileSync(path, JSON.stringify(value, null, 2) + "\n", "utf8");

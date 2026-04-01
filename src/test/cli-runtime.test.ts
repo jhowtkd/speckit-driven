@@ -67,6 +67,17 @@ test("elf runtime commands manage .elf state", () => {
     assert.equal(loadedRun.status, "active");
     assert.ok(currentRun.phaseId);
     assert.ok(existsSync(join(cwd, ".elf", "phases", currentRun.phaseId)));
+    const phaseState = JSON.parse(
+      readFileSync(join(cwd, ".elf", "phases", currentRun.phaseId, "state.json"), "utf8")
+    ) as { currentStep: string; completedSteps: string[] };
+    assert.equal(phaseState.currentStep, "research");
+    assert.deepEqual(phaseState.completedSteps, ["start"]);
+    assert.ok(existsSync(join(cwd, ".elf", "phases", currentRun.phaseId, "spec.md")));
+    assert.ok(existsSync(join(cwd, ".elf", "phases", currentRun.phaseId, "plan.md")));
+    assert.ok(existsSync(join(cwd, ".elf", "phases", currentRun.phaseId, "tasks.md")));
+    assert.ok(existsSync(join(cwd, ".elf", "phases", currentRun.phaseId, "research.md")));
+    assert.ok(existsSync(join(cwd, ".elf", "phases", currentRun.phaseId, "verification.md")));
+    assert.ok(existsSync(join(cwd, ".elf", "phases", currentRun.phaseId, "decision-log.md")));
 
     const resume = spawnSync(process.execPath, [binPath, "resume", currentRun.runId], {
       cwd,
@@ -75,6 +86,7 @@ test("elf runtime commands manage .elf state", () => {
     assert.equal(resume.status, 0, resume.stderr ?? resume.stdout);
     assert.match(resume.stdout, new RegExp(currentRun.runId));
     assert.match(resume.stdout, /Status:\s*active/);
+    assert.match(resume.stdout, /Current step:\s*research/);
 
     const review = spawnSync(process.execPath, [binPath, "review", currentRun.runId], {
       cwd,
