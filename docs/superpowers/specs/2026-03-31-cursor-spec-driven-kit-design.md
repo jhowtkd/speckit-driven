@@ -31,6 +31,18 @@
 | Custom commands | `.cursor/commands`, Markdown | **Beta** — call out in README and compatibility matrix |
 | Custom Modes | Cursor product feature | **Beta** — no “stable product” promise for presets until the platform stabilizes |
 
+### 1.4 Runtime defaults (agent enforcement profile)
+
+**Default profile: semi-strict.**
+
+- The workflow does **not** demand the full phase machinery for every trivial or single-file tweak.
+- Apply **full spec-driven enforcement** (artifacts, gates, clarify/research when needed) when **any** of the following holds:
+  - the request is **ambiguous** or underspecified;
+  - scope is **medium or larger** (multi-file, new behavior, or non-trivial behavior change);
+  - **technical risk** is material (new integration, unfamiliar subsystem, security- or data-sensitive change).
+
+**Implementation note:** Encode this profile in **`00-using-spec-driven.mdc`** as a short, explicit subsection so agents route consistently without turning the product into “always maximal ceremony.”
+
 ---
 
 ## 2. Repository layout (source of truth)
@@ -187,7 +199,9 @@ README and `docs/` must label **custom commands as beta** per Cursor docs.
 
 - **`install`:** Copy/sync from `assets/` to `.cursor/` and **`AGENTS.md`** to repo root from `agents/AGENTS.md`. Preserve semantics of today’s init (skip vs force).
 - **`update`:** Same as today (missing vs diverged vs `--force`).
-- **`doctor`:** Presence checks; **`--strict`** byte comparison to bundle. Non-zero exit when required files missing.
+- **`doctor`:**
+  - **Missing required bundle files** under `.cursor/` (and missing root **`AGENTS.md`** when the kit defines it as required): **non-zero exit** (always).
+  - **Content drift** (files exist but bytes differ from the bundled kit): **default = warn only, exit 0**; **`--strict` = non-zero exit** (treat drift as failure). Document this in README and `docs/TECH.md`.
 
 ### 5.3 CI and contributor experience
 
