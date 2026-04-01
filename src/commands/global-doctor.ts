@@ -1,6 +1,20 @@
 import { homedir } from "os";
+import { existsSync } from "fs";
+import { join } from "path";
 import { doctorCodexGlobalAdapter } from "../core/adapters/codex";
 import { doctorCursorGlobalAdapter } from "../core/adapters/cursor";
+
+function hasLocalCursorAdapter(cwd: string): boolean {
+  return existsSync(join(cwd, ".cursor", "rules", "00-using-elf.mdc"));
+}
+
+function hasLocalCodexAdapter(cwd: string): boolean {
+  return (
+    existsSync(join(cwd, ".agents", "skills", "elf-run", "SKILL.md")) ||
+    existsSync(join(cwd, "codex", "rules", "default.rules")) ||
+    existsSync(join(cwd, ".codex", "agents", "verifier.toml"))
+  );
+}
 
 function printCursorGlobalDoctor(homeDir: string, strict: boolean): boolean {
   const report = doctorCursorGlobalAdapter({
@@ -36,6 +50,12 @@ function printCursorGlobalDoctor(homeDir: string, strict: boolean): boolean {
     }
   } else {
     console.log("\n✅ No issues reported.");
+  }
+
+  if (hasLocalCursorAdapter(process.cwd())) {
+    console.log(
+      "\nNote: a project-local Cursor adapter is also present in the current working directory."
+    );
   }
 
   console.log(report.ok ? "\nResult: OK" : "\nResult: FAILED");
@@ -76,6 +96,12 @@ function printCodexGlobalDoctor(homeDir: string, strict: boolean): boolean {
     }
   } else {
     console.log("\n✅ No issues reported.");
+  }
+
+  if (hasLocalCodexAdapter(process.cwd())) {
+    console.log(
+      "\nNote: a project-local Codex adapter is also present in the current working directory."
+    );
   }
 
   console.log(report.ok ? "\nResult: OK" : "\nResult: FAILED");
