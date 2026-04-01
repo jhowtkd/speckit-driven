@@ -1,0 +1,56 @@
+---
+description: >-
+  Use when: implementation is claimed complete; fill verification.md and score before closing the feature.
+alwaysApply: false
+---
+
+# Verification before completion
+
+## Goal
+
+Validate the feature with the official rubric and decide if it may be **closed**.
+
+## Reference files
+
+- `.cursor/features/<FEATURE_ID>/spec.md`
+- `.cursor/features/<FEATURE_ID>/plan.md`
+- `.cursor/features/<FEATURE_ID>/tasks.md`
+- `.cursor/features/<FEATURE_ID>/verification.md` (create from template if needed)
+- Implementation outputs and evidence
+
+## Target file
+
+- `.cursor/features/<FEATURE_ID>/verification.md`
+
+## Scoring dimensions
+
+| Dimension | Max |
+|-----------|-----|
+| Spec adherence | 25 |
+| Plan adherence | 20 |
+| Output quality | 20 |
+| Tests and evidence | 20 |
+| Reviewability and clarity | 15 |
+| **Total** | **100** |
+
+## Instructions
+
+1. Justify each score with evidence.
+2. List real evidence and tests run.
+3. List open gaps.
+4. Give a clear verdict.
+
+## Completion rule
+
+The feature is **not** complete unless **total score ≥ 90**. If below 90, plan explicit rework and re-verify.
+
+## Bands (reference)
+
+- 0–59: failed
+- 60–79: incomplete
+- 80–89: acceptable but not complete
+- 90–100: complete
+
+## Expected outcome
+
+Filled **`verification.md`** with scores, rationale, evidence, and verdict — then proceed to **`60-closing-feature`**.

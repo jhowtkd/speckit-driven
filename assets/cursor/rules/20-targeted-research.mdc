@@ -1,0 +1,53 @@
+---
+description: >-
+  Use when: external systems are involved; the codebase area is unfamiliar;
+  uncertainty affects implementation decisions. Produce research.md to reduce technical risk.
+alwaysApply: false
+---
+
+# Targeted research
+
+## Goal
+
+Produce **`research.md`** that reduces technical risk and informs **`plan.md`** — without endless study.
+
+## Target file
+
+- `.cursor/features/<FEATURE_ID>/research.md`
+
+## When to use
+
+Use when **any** of:
+
+- new integration
+- new language or stack area
+- new technology
+- relevant external dependency
+- **material technical uncertainty**
+
+Skip or keep minimal for small, well-understood changes (per **`00-using-spec-driven`**).
+
+## Structure
+
+- reason for research
+- research questions
+- initial hypotheses
+- key findings
+- impact on the solution
+- decisions made
+- updates needed to spec or plan
+
+## Rules
+
+1. Research only enough to remove **material** uncertainty.
+2. Convert findings into **practical decisions**.
+3. State explicitly what changes because of research.
+
+## Restrictions
+
+- Do not implement production code in this phase.
+- Do not use research to avoid deciding.
+
+## Expected outcome
+
+A `research.md` that shortens the path to a sound **`plan.md`**.

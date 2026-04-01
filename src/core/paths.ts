@@ -8,3 +8,8 @@ export function getPackageRoot(): string {
 export function getAssetsCursorDir(): string {
   return join(getPackageRoot(), "assets", "cursor");
 }
+
+/** Canonical AGENTS.md template shipped with the package. */
+export function getAgentsTemplatePath(): string {
+  return join(getPackageRoot(), "agents", "AGENTS.md");
+}

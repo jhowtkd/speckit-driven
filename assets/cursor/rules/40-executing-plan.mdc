@@ -1,0 +1,42 @@
+---
+description: >-
+  Use when: spec, plan, and tasks are approved; implement in task order with traceability.
+alwaysApply: false
+---
+
+# Executing the plan
+
+## Goal
+
+Implement the feature per **`spec.md`**, **`plan.md`**, and **`tasks.md`** without scope drift or broken traceability.
+
+## Reference files
+
+- `.cursor/features/<FEATURE_ID>/spec.md`
+- `.cursor/features/<FEATURE_ID>/plan.md`
+- `.cursor/features/<FEATURE_ID>/tasks.md`
+- `.cursor/features/<FEATURE_ID>/state.json`
+- `.cursor/features/<FEATURE_ID>/decision-log.md` (create/update as needed)
+
+## Execution requirements
+
+- Follow tasks **strictly in order**. Do not skip or reorder without **documented justification** (state + decision log or spec/plan update).
+- **Log meaningful decisions** in **`decision-log.md`** when trade-offs, approach changes, or structural adjustments matter (see prompts pattern: date, decision, context, alternatives, rationale, impact).
+- **Update `state.json` continuously** to reflect real progress, blockers, and verification score — no fictional progress.
+
+## Do not
+
+- Execute tasks out of order without justification.
+- Expand scope without updating **spec**, **plan**, and **tasks** (and **decision-log** when relevant).
+- Mark a task **done** without verifiable output and evidence.
+- Introduce complexity without justification.
+
+## Rules
+
+1. Do not expand scope on your own.
+2. If blocked, record it in state and tasks.
+3. If implementation diverges structurally from the plan, **do not improvise silently** — record and propose document updates.
+
+## Expected outcome
+
+Implementation complete with traceability, checkpoints, and truthful state — ready for **`50-verification-before-completion`**.

@@ -1,0 +1,57 @@
+---
+description: >-
+  Use when: a spec exists; implementation is requested; the work is non-trivial.
+  Produce plan.md and actionable tasks.md — no implementation yet.
+alwaysApply: false
+---
+
+# Writing plan and tasks
+
+## Goal
+
+Define technical approach and an **executable, ordered task list** aligned with **`spec.md`** and **`research.md`** (if present).
+
+## Reference files
+
+- `.cursor/features/<FEATURE_ID>/spec.md`
+- `.cursor/features/<FEATURE_ID>/research.md` (if present)
+
+## Target files
+
+- `.cursor/features/<FEATURE_ID>/plan.md`
+- `.cursor/features/<FEATURE_ID>/tasks.md`
+
+## Plan validity (hard requirement)
+
+A plan is **only valid** if:
+
+- **`tasks.md` explicitly lists** all tasks.
+- Tasks are **actionable**, **ordered**, and **independently executable** (each with verifiable output).
+- Allowed task statuses: `todo`, `doing`, `blocked`, `review`, `done` (or equivalent documented in template).
+
+**Cross-rule:** **`00-using-spec-driven`** forbids implementation until both a concrete **`plan.md`** and explicit **`tasks.md`** exist.
+
+## Plan content
+
+Include: overall strategy, impacted areas, execution order, trade-offs, technical risks, test strategy, simplification criteria.
+
+## Tasks content
+
+Each task: id, phase, description, owner/agent, dependencies, affected files, expected output, expected tests or justification, checkpoint, initial status.
+
+## Rules
+
+1. Plan answers **how** without losing alignment with spec.
+2. Avoid unnecessary complexity; document trade-offs.
+3. Tests proportional to risk.
+4. Task order must be practical and coherent.
+5. Dependencies explicit; every task has verifiable output.
+
+## Restrictions
+
+- Do **not** implement code in this phase.
+- Do **not** collapse work into a single vague task.
+
+## Expected outcome
+
+`plan.md` and `tasks.md` ready for **`40-executing-plan`**.

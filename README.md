@@ -1,90 +1,80 @@
 # spec-driven-kit
 
-Pacote npm com CLI para instalar o **Spec-Driven Coding MVP** (constitutions, templates, prompts e skill Cursor) em qualquer repositório, gerando uma `.cursor/` autossuficiente.
+Open-source **spec-driven workflow** for [Cursor](https://cursor.com): install **Project Rules** (`.cursor/rules/*.mdc`), templates, optional **custom commands** (beta), and root **`AGENTS.md`**. The npm CLI is only an **installer / updater / doctor** — the product behavior lives in rules and agent instructions.
 
-## Requisitos
+## Requirements
 
 - Node.js **18+**
+- Cursor (recommended) for Project Rules and commands
 
-## Instalação e uso
+## Quick install
 
-Em um projeto alvo (com `.git` ou `package.json` na raiz):
-
-```bash
-npx spec-driven-kit init
-```
-
-Criar uma feature numerada automaticamente (`001-slug`, `002-slug`, …):
+In your project root:
 
 ```bash
-npx spec-driven-kit new feature login-flow
+npx spec-driven-kit install
 ```
 
-Validar a instalação:
+Or with a local dependency:
 
 ```bash
-npx spec-driven-kit doctor
-npx spec-driven-kit doctor --strict
+npm install spec-driven-kit
+npx spec-driven-kit install
 ```
 
-> **Nota sobre o `doctor`**:
-> O comando padrão verifica se todos os arquivos recomendados estão presentes. A flag `--strict` também compara os bytes de cada arquivo com a versão distribuída no kit, identificando se você fez edições nos arquivos ou se eles estão desatualizados.
+- **`install`** — copies kit files into `./.cursor/` and **`./AGENTS.md`** (skips existing files unless `--force`).
+- **`init`** — deprecated alias for **`install`** (warns on stderr).
+- **`update`** — adds missing files; leaves divergent files untouched unless `--force`.
+- **`doctor`** — checks `.cursor/` and `AGENTS.md` against the bundled kit.
 
-Atualizar assets do kit:
+### Doctor semantics
+
+- **Missing** required files → **non-zero exit** (failure).
+- **Content drift** (files differ from the kit) → **warnings**, **exit 0** by default.
+- **`doctor --strict`** → drift is treated as **failure** (non-zero exit).
+
+### Outside a classic repo
 
 ```bash
-npx spec-driven-kit update
-npx spec-driven-kit update --force
+npx spec-driven-kit install --allow-anywhere
 ```
 
-> **Nota sobre o `update`**:
-> O comando padrão apenas instala arquivos que estão faltando (missing). Se um arquivo na sua máquina já existe e for diferente do kit, ele será preservado (diverged). Para sobrescrever arquivos divergentes com as versões mais recentes do pacote, utilize `--force`.
+## Compatibility matrix (Cursor surfaces)
 
-### Fora de um repo “clássico”
+| Surface | Location | Stability |
+|---------|-----------|-----------|
+| Project Rules | `.cursor/rules/*.mdc` | Documented |
+| Agent instructions | `AGENTS.md` (repo root) | Documented |
+| Custom commands | `.cursor/commands/*.md` | **Beta** |
+| Custom Modes | Cursor app | **Beta** — optional presets live under `experimental/modes/` in this repo only (not installed to your project in v1) |
 
-Se não houver `.git` nem `package.json`, use:
+## Optional: scaffold a feature
+
+Not part of the CLI binary:
 
 ```bash
-npx spec-driven-kit init --allow-anywhere
+node node_modules/spec-driven-kit/scripts/new-feature.mjs my-feature-name
 ```
 
-## Troubleshooting
+Creates `.cursor/features/NNN-my-feature-name/` from templates.
 
-- **`Missing .cursor/ — run spec-driven-kit init`**: Você está tentando rodar comandos em um diretório que ainda não foi inicializado com o kit. Rode `npx spec-driven-kit init`.
-- **`Maximum feature index 999 reached`**: Você criou mais de 999 features. Arquive algumas removendo da pasta principal ou edite o prefixo numérico manualmente se necessário.
-- **Diverged assets no `update`**: Os arquivos do kit na sua máquina foram editados. Se quiser voltar para o formato original distribuído, rode `npx spec-driven-kit update --force`.
-
-## Desenvolvimento deste pacote
+## Development of this package
 
 ```bash
 npm install
 npm run build
+npm test
+npm run validate:rules
 node bin/spec-driven-kit.js --help
 ```
 
-- **Código:** `src/` (TypeScript → `dist/`)
-- **Artefatos instalados no projeto alvo:** `assets/cursor/` (cópia espelhada para `.cursor/`)
+## Documentation
 
-Publicar no npm: ajuste `repository` em `package.json`, depois `npm publish`.
+- Design spec: [docs/superpowers/specs/2026-03-31-cursor-spec-driven-kit-design.md](docs/superpowers/specs/2026-03-31-cursor-spec-driven-kit-design.md)
+- Implementation plan: [docs/plans/2026-03-31-cursor-first-spec-driven-kit.md](docs/plans/2026-03-31-cursor-first-spec-driven-kit.md)
+- Technical notes: [docs/TECH.md](docs/TECH.md)
+- Human principles (non-normative): [docs/constitution.md](docs/constitution.md)
 
-## O que é instalado
+## License
 
-Após `init`, o projeto recebe (entre outros):
-
-- `constitution.md`, `constitution.en.md`, `runtime-constitution.md`
-- `quickstart.md`
-- `prompts/*.md`
-- `templates/*`
-- `skills/spec-driven-mvp/SKILL.md`
-- `features/README.md`
-- `spec-driven-kit.json` (metadados: versão do kit, datas)
-
-O fluxo operacional (spec → plan → tasks → execução → verification ≥ 90, research quando aplicável, estado em arquivo) permanece o do documento mestre; a CLI só materializa e mantém os arquivos.
-
-## Decisões técnicas
-
-Ver [docs/TECH.md](docs/TECH.md).
-
-## Licença
-
-MIT
+MIT — see [LICENSE](LICENSE).
