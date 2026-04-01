@@ -32,3 +32,30 @@ export function readInstalledKitMeta(cursorDir: string): KitMeta | null {
   }
   return null;
 }
+
+export type RuntimeMeta = {
+  schemaVersion: number;
+  runtime: string;
+  version: string;
+  installedAt: string;
+  lastUpdatedAt?: string;
+};
+
+export function readInstalledRuntimeMeta(stateDir: string): RuntimeMeta | null {
+  const p = join(stateDir, "metadata.json");
+  if (!existsSync(p)) return null;
+  try {
+    const j = JSON.parse(readFileSync(p, "utf8")) as RuntimeMeta;
+    if (
+      typeof j.schemaVersion === "number" &&
+      typeof j.runtime === "string" &&
+      typeof j.version === "string" &&
+      typeof j.installedAt === "string"
+    ) {
+      return j;
+    }
+  } catch {
+    /* ignore */
+  }
+  return null;
+}

@@ -80,3 +80,33 @@ export function writeKitMeta(cursorDir: string, kitVersion: string): void {
   mkdirSync(cursorDir, { recursive: true });
   writeFileSync(p, JSON.stringify(body, null, 2) + "\n", "utf8");
 }
+
+export function writeRuntimeMeta(stateDir: string, version: string): void {
+  const p = join(stateDir, "metadata.json");
+  const existing = existsSync(p);
+  let installedAt = new Date().toISOString();
+  if (existing) {
+    try {
+      const prev = JSON.parse(readUtf8(p)) as { installedAt?: string };
+      if (prev.installedAt) installedAt = prev.installedAt;
+    } catch {
+      /* keep new */
+    }
+  }
+  mkdirSync(stateDir, { recursive: true });
+  writeFileSync(
+    p,
+    JSON.stringify(
+      {
+        schemaVersion: 1,
+        runtime: "elf",
+        version,
+        installedAt,
+        lastUpdatedAt: new Date().toISOString(),
+      },
+      null,
+      2
+    ) + "\n",
+    "utf8"
+  );
+}

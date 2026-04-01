@@ -9,26 +9,26 @@ export type InstallReport = {
 };
 
 /**
- * Copies bundled assets into target `.cursor/`.
+ * Copies a bundled file tree into a target directory.
  * - Missing files → created
  * - Existing + force → updated
  * - Existing + !force → skipped
  */
-export function installKitFiles(options: {
-  assetsCursorDir: string;
-  targetCursorDir: string;
+export function installBundleFiles(options: {
+  sourceDir: string;
+  targetDir: string;
   force: boolean;
 }): InstallReport {
-  const { assetsCursorDir, targetCursorDir, force } = options;
+  const { sourceDir, targetDir, force } = options;
   const created: string[] = [];
   const updated: string[] = [];
   const skipped: string[] = [];
 
-  const relPaths = listFilesRecursive(assetsCursorDir);
+  const relPaths = listFilesRecursive(sourceDir);
   for (const rel of relPaths) {
-    const src = join(assetsCursorDir, rel);
-    const dest = join(targetCursorDir, rel);
-    const destRel = relative(targetCursorDir, dest).split("\\").join("/");
+    const src = join(sourceDir, rel);
+    const dest = join(targetDir, rel);
+    const destRel = relative(targetDir, dest).split("\\").join("/");
 
     mkdirSync(join(dest, ".."), { recursive: true });
 
@@ -46,4 +46,19 @@ export function installKitFiles(options: {
   }
 
   return { created, updated, skipped };
+}
+
+/**
+ * Backwards-compatible wrapper for the Cursor bundle.
+ */
+export function installKitFiles(options: {
+  assetsCursorDir: string;
+  targetCursorDir: string;
+  force: boolean;
+}): InstallReport {
+  return installBundleFiles({
+    sourceDir: options.assetsCursorDir,
+    targetDir: options.targetCursorDir,
+    force: options.force,
+  });
 }

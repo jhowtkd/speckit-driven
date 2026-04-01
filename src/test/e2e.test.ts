@@ -47,8 +47,8 @@ test("E2E CLI Flow", async (t) => {
     assert.match(out, /Updated: 0/);
   });
 
-  await t.test("init alias still runs install", () => {
-    const cwd2 = mkdtempSync(join(tmpdir(), "spec-driven-kit-init-alias-"));
+  await t.test("init bootstraps runtime store", () => {
+    const cwd2 = mkdtempSync(join(tmpdir(), "elf-init-bootstrap-"));
     t.after(() => rmSync(cwd2, { recursive: true, force: true }));
     const r = spawnSync(
       process.execPath,
@@ -56,7 +56,9 @@ test("E2E CLI Flow", async (t) => {
       { cwd: cwd2, encoding: "utf8" }
     );
     assert.strictEqual(r.status, 0, r.stderr ?? r.stdout);
-    assert.match(String(r.stderr), /deprecated/i);
+    assert.match(r.stdout, /elf init/);
+    assert.ok(existsSync(join(cwd2, ".elf", "config.toml")));
+    assert.ok(existsSync(join(cwd2, ".elf", "state", "metadata.json")));
     assert.ok(existsSync(join(cwd2, "AGENTS.md")));
   });
 });
