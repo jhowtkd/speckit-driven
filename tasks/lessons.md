@@ -9,3 +9,4 @@
 - Do not hard-code POSIX path separators in tests when the implementation uses `path.join()`; normalize paths or assert via path-aware helpers so Windows CI stays green.
 - When a command handler throws for expected user mistakes, catch the error at the CLI boundary and print a clean message to stderr instead of leaking a Node stack trace.
 - In workflow routing, treat explicit review requests as review first, and only route to debug when the prompt clearly asks for incident investigation rather than a bounded fix.
+- In intent normalization, let `continue/resume` win before epic keywords when there is existing work, and surface explicit verification prompts as `verify-run` instead of falling back to generic task routing.

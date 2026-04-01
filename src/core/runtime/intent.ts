@@ -10,10 +10,21 @@ export function normalizeIntent(prompt: string, hasExistingSpec: boolean): ElfIn
   if (
     text.includes("review") ||
     text.includes("code review") ||
+    text.includes("verify") ||
+    text.includes("validation") ||
+    text.includes("check this run") ||
+    text.includes("against the spec") ||
     text.includes("feedback") ||
     (text.includes("branch") && text.includes("regression"))
   ) {
+    if (text.includes("verify") || text.includes("validation") || text.includes("against the spec")) {
+      return "verify-run";
+    }
     return "review-change";
+  }
+
+  if (hasExistingSpec && (text.includes("continue") || text.includes("resume"))) {
+    return "continue-run";
   }
 
   if (
@@ -53,10 +64,6 @@ export function normalizeIntent(prompt: string, hasExistingSpec: boolean): ElfIn
     text.includes("architecture")
   ) {
     return "new-epic";
-  }
-
-  if (hasExistingSpec && (text.includes("continue") || text.includes("resume"))) {
-    return "continue-run";
   }
 
   if (text.includes("ship") || text.includes("release")) {

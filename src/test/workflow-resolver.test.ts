@@ -42,4 +42,20 @@ test("resolveWorkflow routes common prompts to the expected workflow", () => {
     }).workflowId,
     "epic"
   );
+
+  assert.equal(
+    resolveWorkflow({
+      prompt: "resume the redesign of the workflow engine",
+      hasExistingSpec: true,
+    }).workflowId,
+    "phase"
+  );
+
+  assert.equal(
+    resolveWorkflow({
+      prompt: "verify this run against the spec",
+      hasExistingSpec: true,
+    }).workflowId,
+    "review"
+  );
 });
