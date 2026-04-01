@@ -26,3 +26,5 @@
 - For multi-root adapter bundles, treat any surviving bundle footprint as a valid update target; do not gate repair on a single subtree that may be missing during partial recovery.
 - When a global install manifest preserves historical ownership for future cleanup, both update and uninstall paths must consume that history; preserving it without using it just creates orphaned files and shared-config entries.
 - Do not mistake runtime plumbing, installers, and thin adapter scaffolding for the actual product; if the goal is GSD/Superpowers-style chained workflows inside Codex and Cursor, the host-native flow experience must exist before calling the direction delivered.
+- If a workflow is presented as host-native, the MCP bridge must expose that same workflow chain instead of stopping at generic run/review/verify primitives.
+- Repositories that bootstrap local runtime or host-integration state for manual testing should ignore those generated root-level artifacts so the worktree reflects product changes, not local experiments.

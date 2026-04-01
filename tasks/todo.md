@@ -26,3 +26,18 @@ inside Cursor and Codex, starting with a concrete `phase` vertical slice.
 - This pivot adds a first real host-native vertical slice for `phase`:
   `start -> research -> plan -> execute -> verify -> close`.
 - The adapters now drive runtime steps instead of only describing them.
+
+## 2026-04-01 - Host-Native Completion Pass
+
+### Goal
+
+Close the remaining gaps that still make the host-native experience feel
+unfinished after the phase-flow pivot.
+
+### Plan
+
+- [x] Expose the real phase chain through MCP so hosts can drive the same steps over the bridge.
+- [x] Make `elf_run` over MCP delegate to the real phase chain when `workflow=phase`.
+- [x] Add real MCP handshake coverage for the phase chain end-to-end.
+- [x] Simplify README onboarding around the real `phase` workflow and advanced/global commands.
+- [x] Ignore generated local runtime/adapter artifacts so testing the repo does not dirty the branch.

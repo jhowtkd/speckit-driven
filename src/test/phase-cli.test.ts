@@ -6,6 +6,25 @@ import { tmpdir } from "os";
 import { spawnSync } from "child_process";
 import { loadRun } from "../core/runtime/run-store";
 
+test("elf phase start requires an initialized runtime", () => {
+  const root = join(__dirname, "..", "..");
+  const binPath = join(root, "bin", "elf.js");
+  const cwd = mkdtempSync(join(tmpdir(), "elf-phase-cli-uninit-"));
+
+  try {
+    const start = spawnSync(
+      process.execPath,
+      [binPath, "phase", "start", "--title", "User auth"],
+      { cwd, encoding: "utf8" }
+    );
+    assert.equal(start.status, 1, start.stderr ?? start.stdout);
+    assert.match(start.stderr, /elf phase start: run elf init first/);
+    assert.equal(existsSync(join(cwd, ".elf")), false);
+  } finally {
+    rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
 test("elf phase commands drive a real chained phase workflow", () => {
   const root = join(__dirname, "..", "..");
   const binPath = join(root, "bin", "elf.js");

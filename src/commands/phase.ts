@@ -3,6 +3,7 @@ import {
   getPhaseProgress,
   startPhaseFlow,
 } from "../core/runtime/phase-flow";
+import { buildRuntimeContext } from "../core/runtime/context-builder";
 
 export type PhaseAction = "research" | "plan" | "execute" | "verify" | "close";
 
@@ -28,6 +29,11 @@ export function runPhaseStart(
   cwd: string,
   title: string
 ): ReturnType<typeof startPhaseFlow> {
+  const context = buildRuntimeContext(cwd);
+  if (!context.config || !context.runtimeMeta) {
+    throw new Error("elf phase start: run elf init first");
+  }
+
   const result = startPhaseFlow(cwd, title);
   printPhaseResult("elf phase start", result);
   return result;

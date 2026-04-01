@@ -19,6 +19,83 @@ export function buildElfMcpTools(): ElfMcpTool[] {
       },
     },
     {
+      name: "elf_phase_start",
+      description: "Start a real phase workflow in the ELF runtime.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          title: { type: "string" },
+        },
+        required: ["title"],
+      },
+    },
+    {
+      name: "elf_phase_research",
+      description: "Advance a phase workflow into the research step.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          runId: { type: "string" },
+        },
+        required: ["runId"],
+      },
+    },
+    {
+      name: "elf_phase_plan",
+      description: "Advance a phase workflow into the plan step.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          runId: { type: "string" },
+        },
+        required: ["runId"],
+      },
+    },
+    {
+      name: "elf_phase_execute",
+      description: "Advance a phase workflow into the execute step.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          runId: { type: "string" },
+        },
+        required: ["runId"],
+      },
+    },
+    {
+      name: "elf_phase_verify",
+      description: "Advance a phase workflow through verification.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          runId: { type: "string" },
+        },
+        required: ["runId"],
+      },
+    },
+    {
+      name: "elf_phase_close",
+      description: "Close a verified phase workflow.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          runId: { type: "string" },
+        },
+        required: ["runId"],
+      },
+    },
+    {
+      name: "elf_phase_status",
+      description: "Report the current step of a phase workflow.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          runId: { type: "string" },
+        },
+        required: ["runId"],
+      },
+    },
+    {
       name: "elf_resume",
       description: "Resume an existing ELF run by id.",
       inputSchema: {

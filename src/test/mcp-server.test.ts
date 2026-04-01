@@ -14,6 +14,13 @@ test("buildElfMcpTools exposes the ELF bridge tool registry", () => {
     tools.map((tool) => tool.name),
     [
       "elf_run",
+      "elf_phase_start",
+      "elf_phase_research",
+      "elf_phase_plan",
+      "elf_phase_execute",
+      "elf_phase_verify",
+      "elf_phase_close",
+      "elf_phase_status",
       "elf_resume",
       "elf_verify",
       "elf_review",
@@ -38,6 +45,12 @@ test("elf mcp serve completes an MCP handshake and lists tools", async () => {
   const root = join(__dirname, "..", "..");
   const elfBin = join(root, "bin", "elf.js");
   const cwd = mkdtempSync(join(tmpdir(), "elf-mcp-cwd-"));
+  const init = spawnSync(
+    process.execPath,
+    [elfBin, "init", "--allow-anywhere"],
+    { cwd, encoding: "utf8" }
+  );
+  assert.equal(init.status, 0, init.stderr ?? init.stdout);
 
   const transport = new StdioClientTransport({
     command: process.execPath,
@@ -54,6 +67,13 @@ test("elf mcp serve completes an MCP handshake and lists tools", async () => {
       result.tools.map((tool) => tool.name),
       [
         "elf_run",
+        "elf_phase_start",
+        "elf_phase_research",
+        "elf_phase_plan",
+        "elf_phase_execute",
+        "elf_phase_verify",
+        "elf_phase_close",
+        "elf_phase_status",
         "elf_resume",
         "elf_verify",
         "elf_review",
@@ -67,7 +87,71 @@ test("elf mcp serve completes an MCP handshake and lists tools", async () => {
     const payload = content[0];
     assert.equal(payload.type, "text");
     const parsed = JSON.parse(payload.text) as { initialized?: boolean };
-    assert.equal(parsed.initialized, false);
+    assert.equal(parsed.initialized, true);
+
+    const started = await client.callTool({
+      name: "elf_run",
+      arguments: {
+        workflow: "phase",
+        title: "MCP auth",
+      },
+    });
+    const startedContent = started.content as Array<{ type: "text"; text: string }>;
+    const startedText = startedContent[0]?.text ?? "";
+    assert.match(startedText, /Workflow:\s*phase/);
+    assert.match(startedText, /Current step:\s*research/);
+    assert.match(startedText, /Next step:\s*research/);
+    const runIdMatch = startedText.match(/Run ID:\s*(.+)/);
+    assert.ok(runIdMatch, startedText);
+    const runId = runIdMatch[1].trim();
+
+    const phaseStatus = await client.callTool({
+      name: "elf_phase_status",
+      arguments: { runId },
+    });
+    const phaseStatusText =
+      (phaseStatus.content as Array<{ type: "text"; text: string }>)[0]?.text ?? "";
+    assert.match(phaseStatusText, /Current step:\s*research/);
+
+    const research = await client.callTool({
+      name: "elf_phase_research",
+      arguments: { runId },
+    });
+    const researchText =
+      (research.content as Array<{ type: "text"; text: string }>)[0]?.text ?? "";
+    assert.match(researchText, /Next step:\s*plan/);
+
+    const plan = await client.callTool({
+      name: "elf_phase_plan",
+      arguments: { runId },
+    });
+    const planText =
+      (plan.content as Array<{ type: "text"; text: string }>)[0]?.text ?? "";
+    assert.match(planText, /Next step:\s*execute/);
+
+    const execute = await client.callTool({
+      name: "elf_phase_execute",
+      arguments: { runId },
+    });
+    const executeText =
+      (execute.content as Array<{ type: "text"; text: string }>)[0]?.text ?? "";
+    assert.match(executeText, /Next step:\s*verify/);
+
+    const verify = await client.callTool({
+      name: "elf_phase_verify",
+      arguments: { runId },
+    });
+    const verifyText =
+      (verify.content as Array<{ type: "text"; text: string }>)[0]?.text ?? "";
+    assert.match(verifyText, /Next step:\s*close/);
+
+    const close = await client.callTool({
+      name: "elf_phase_close",
+      arguments: { runId },
+    });
+    const closeText =
+      (close.content as Array<{ type: "text"; text: string }>)[0]?.text ?? "";
+    assert.match(closeText, /Status:\s*completed/);
   } finally {
     await transport.close();
     rmSync(cwd, { recursive: true, force: true });

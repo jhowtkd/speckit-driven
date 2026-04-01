@@ -5,6 +5,11 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { toKebabCase } from "../core/naming";
 import { advanceWorkflowState, loadCurrentRun } from "../core/runtime/chain-engine";
 import { buildRuntimeContext } from "../core/runtime/context-builder";
+import {
+  advancePhaseStep,
+  getPhaseProgress,
+  startPhaseFlow,
+} from "../core/runtime/phase-flow";
 import { createRun, loadRun } from "../core/runtime/run-store";
 import { verifyElfRun } from "../core/runtime/verifier";
 import { buildElfMcpTools } from "./tools";
@@ -43,6 +48,24 @@ function formatRunSummary(label: string, run: {
     `Workflow: ${run.workflowId}`,
     `Phase ID: ${run.phaseId ?? "-"}`,
     `Status: ${run.status}`,
+  ].join("\n");
+}
+
+function formatPhaseSummary(label: string, result: {
+  runId: string;
+  phaseId: string;
+  status: string;
+  currentStep: string;
+  nextStep: string | null;
+}): string {
+  return [
+    label,
+    `Run ID: ${result.runId}`,
+    "Workflow: phase",
+    `Phase ID: ${result.phaseId}`,
+    `Current step: ${result.currentStep}`,
+    `Next step: ${result.nextStep ?? "-"}`,
+    `Status: ${result.status}`,
   ].join("\n");
 }
 
@@ -122,6 +145,11 @@ function callTool(
         return errorResult("elf run: run elf init first");
       }
 
+      if (workflow === "phase") {
+        const started = startPhaseFlow(cwd, title);
+        return textResult(formatPhaseSummary("elf run", started));
+      }
+
       const phaseId = toKebabCase(title) || workflow;
       const created = createRun({
         cwd,
@@ -130,6 +158,57 @@ function callTool(
       });
       const active = advanceWorkflowState(cwd, created.runId, "active");
       return textResult(formatRunSummary("elf run", active));
+    }
+    case "elf_phase_start": {
+      const title = readStringArg(args, "title");
+      if (!title) {
+        return errorResult("elf phase start: missing title");
+      }
+
+      const context = buildRuntimeContext(cwd);
+      if (!context.config || !context.runtimeMeta) {
+        return errorResult("elf phase start: run elf init first");
+      }
+
+      const started = startPhaseFlow(cwd, title);
+      return textResult(formatPhaseSummary("elf phase start", started));
+    }
+    case "elf_phase_research":
+    case "elf_phase_plan":
+    case "elf_phase_execute":
+    case "elf_phase_verify":
+    case "elf_phase_close": {
+      const runId = readStringArg(args, "runId");
+      if (!runId) {
+        return errorResult(`${name.replaceAll("_", " ")}: missing runId`);
+      }
+
+      const step = name.replace("elf_phase_", "");
+      try {
+        const result = advancePhaseStep(
+          cwd,
+          runId,
+          step as "research" | "plan" | "execute" | "verify" | "close"
+        );
+        return textResult(formatPhaseSummary(name.replaceAll("_", " "), result));
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        return errorResult(message);
+      }
+    }
+    case "elf_phase_status": {
+      const runId = readStringArg(args, "runId");
+      if (!runId) {
+        return errorResult("elf phase status: missing runId");
+      }
+
+      try {
+        const result = getPhaseProgress(cwd, runId);
+        return textResult(formatPhaseSummary("elf phase status", result));
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        return errorResult(message);
+      }
     }
     case "elf_resume": {
       const runId = readStringArg(args, "runId");
@@ -202,6 +281,35 @@ export async function startElfMcpServer(): Promise<void> {
             inputSchema: z.object({
               workflow: z.string(),
               title: z.string(),
+            }),
+          },
+          async (args) => callTool(cwd, tool.name, args)
+        );
+        break;
+      case "elf_phase_start":
+        server.registerTool(
+          tool.name,
+          {
+            description: tool.description,
+            inputSchema: z.object({
+              title: z.string(),
+            }),
+          },
+          async (args) => callTool(cwd, tool.name, args)
+        );
+        break;
+      case "elf_phase_research":
+      case "elf_phase_plan":
+      case "elf_phase_execute":
+      case "elf_phase_verify":
+      case "elf_phase_close":
+      case "elf_phase_status":
+        server.registerTool(
+          tool.name,
+          {
+            description: tool.description,
+            inputSchema: z.object({
+              runId: z.string(),
             }),
           },
           async (args) => callTool(cwd, tool.name, args)
