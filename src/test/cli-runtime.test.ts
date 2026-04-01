@@ -6,6 +6,25 @@ import { tmpdir } from "os";
 import { spawnSync } from "child_process";
 import { loadRun } from "../core/runtime/run-store";
 
+test("elf run requires an initialized runtime", () => {
+  const root = join(__dirname, "..", "..");
+  const binPath = join(root, "bin", "elf.js");
+  const cwd = mkdtempSync(join(tmpdir(), "elf-runtime-uninitialized-"));
+
+  try {
+    const run = spawnSync(
+      process.execPath,
+      [binPath, "run", "--workflow", "phase", "--title", "User auth"],
+      { cwd, encoding: "utf8" }
+    );
+    assert.equal(run.status, 1, run.stderr ?? run.stdout);
+    assert.match(run.stderr, /elf run: run elf init first/);
+    assert.equal(existsSync(join(cwd, ".elf")), false);
+  } finally {
+    rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
 test("elf runtime commands manage .elf state", () => {
   const root = join(__dirname, "..", "..");
   const binPath = join(root, "bin", "elf.js");

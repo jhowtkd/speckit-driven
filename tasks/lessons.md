@@ -11,3 +11,5 @@
 - In workflow routing, treat explicit review requests as review first, and only route to debug when the prompt clearly asks for incident investigation rather than a bounded fix.
 - In intent normalization, let `continue/resume` win before epic keywords when there is existing work, and surface explicit verification prompts as `verify-run` instead of falling back to generic task routing.
 - A loader that points at missing or corrupted on-disk state must return `null` or fail loudly, never synthesize a plausible record from a pointer file.
+- Runtime commands must never create partial `.elf/` state; require a valid initialized runtime first or bootstrap all required runtime files before writing run state.
+- When keeping a legacy compatibility command during migration, keep its guidance consistent with the commands that actually exist so users are not sent into guaranteed failures.

@@ -85,5 +85,5 @@ export function runInstall(
   console.log("\n✅ Wrote .cursor/spec-driven-kit.json");
   console.log("\nNext steps:");
   console.log("  Use .cursor/rules and AGENTS.md; optional: .cursor/commands (beta)");
-  console.log("  npx spec-driven-kit doctor");
+  console.log("  Run `elf init` before using ELF runtime commands like run/resume/review/verify.");
 }

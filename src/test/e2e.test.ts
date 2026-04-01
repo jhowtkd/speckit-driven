@@ -29,6 +29,8 @@ test("E2E CLI Flow", async (t) => {
   await t.test("install --allow-anywhere", () => {
     const out = runCmd("install --allow-anywhere");
     assert.match(out, /Wrote \.cursor\/spec-driven-kit\.json/);
+    assert.match(out, /elf init/);
+    assert.doesNotMatch(out, /spec-driven-kit doctor/);
     assert.ok(existsSync(join(cwd, ".cursor", "spec-driven-kit.json")));
     assert.ok(existsSync(join(cwd, ".cursor", "constitution.md")));
     assert.ok(existsSync(join(cwd, "AGENTS.md")));
