@@ -2,16 +2,13 @@ import { existsSync } from "fs";
 import { isAbsolute, resolve } from "path";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import {
-  CallToolRequestSchema,
-  ListToolsRequestSchema,
-} from "@modelcontextprotocol/sdk/types.js";
 import { toKebabCase } from "../core/naming";
 import { advanceWorkflowState, loadCurrentRun } from "../core/runtime/chain-engine";
 import { buildRuntimeContext } from "../core/runtime/context-builder";
 import { createRun, loadRun } from "../core/runtime/run-store";
 import { verifyElfRun } from "../core/runtime/verifier";
 import { buildElfMcpTools } from "./tools";
+import { z } from "zod";
 
 type TextResult = {
   content: Array<{ type: "text"; text: string }>;
@@ -195,15 +192,71 @@ export async function startElfMcpServer(): Promise<void> {
   const tools = buildElfMcpTools();
   const cwd = process.cwd();
 
-  server.server.setRequestHandler(ListToolsRequestSchema, async () => ({
-    tools,
-  }));
-
-  server.server.setRequestHandler(CallToolRequestSchema, async (request) => {
-    const name = request.params.name;
-    const args = (request.params.arguments ?? {}) as Record<string, unknown>;
-    return callTool(cwd, name, args);
-  });
+  for (const tool of tools) {
+    switch (tool.name) {
+      case "elf_run":
+        server.registerTool(
+          tool.name,
+          {
+            description: tool.description,
+            inputSchema: z.object({
+              workflow: z.string(),
+              title: z.string(),
+            }),
+          },
+          async (args) => callTool(cwd, tool.name, args)
+        );
+        break;
+      case "elf_resume":
+        server.registerTool(
+          tool.name,
+          {
+            description: tool.description,
+            inputSchema: z.object({
+              runId: z.string(),
+            }),
+          },
+          async (args) => callTool(cwd, tool.name, args)
+        );
+        break;
+      case "elf_verify":
+        server.registerTool(
+          tool.name,
+          {
+            description: tool.description,
+            inputSchema: z.object({
+              runId: z.string(),
+            }),
+          },
+          async (args) => callTool(cwd, tool.name, args)
+        );
+        break;
+      case "elf_review":
+        server.registerTool(
+          tool.name,
+          {
+            description: tool.description,
+            inputSchema: z.object({
+              target: z.string(),
+            }),
+          },
+          async (args) => callTool(cwd, tool.name, args)
+        );
+        break;
+      case "elf_status":
+        server.registerTool(
+          tool.name,
+          {
+            description: tool.description,
+            inputSchema: z.object({}),
+          },
+          async () => callTool(cwd, tool.name, {})
+        );
+        break;
+      default:
+        break;
+    }
+  }
 
   await server.connect(new StdioServerTransport());
 }

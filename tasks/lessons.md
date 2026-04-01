@@ -13,3 +13,4 @@
 - A loader that points at missing or corrupted on-disk state must return `null` or fail loudly, never synthesize a plausible record from a pointer file.
 - Runtime commands must never create partial `.elf/` state; require a valid initialized runtime first or bootstrap all required runtime files before writing run state.
 - When keeping a legacy compatibility command during migration, keep its guidance consistent with the commands that actually exist so users are not sent into guaranteed failures.
+- For MCP servers, register tools through `McpServer.registerTool()` so the SDK advertises tool capability and wires `tools/list` and `tools/call` consistently.
