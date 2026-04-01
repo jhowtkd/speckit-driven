@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { normalize } from "path";
 import { getAssetsElfDir } from "../core/paths";
 import {
   loadBundledRuntimeTemplates,
@@ -7,7 +8,7 @@ import {
 } from "../core/runtime/workflow-loader";
 
 test("bundled ELF runtime assets are discoverable", () => {
-  assert.match(getAssetsElfDir(), /assets\/elf$/);
+  assert.match(normalize(getAssetsElfDir()), /assets[\\/]+elf$/);
 
   const defs = loadBundledWorkflowDefinitions();
   assert.deepStrictEqual(

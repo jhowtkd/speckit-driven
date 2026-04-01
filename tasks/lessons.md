@@ -6,3 +6,4 @@
 - For architecture choice points, restate the active choice in the next design section so the direction is explicit and auditable.
 - Do not rename the publishable npm package to a name that is already taken; verify package availability before treating a branding change as release-safe.
 - When adding a new CLI entrypoint, ensure the git executable bit is set on the bin file so direct execution and packaged usage behave the same.
+- Do not hard-code POSIX path separators in tests when the implementation uses `path.join()`; normalize paths or assert via path-aware helpers so Windows CI stays green.
