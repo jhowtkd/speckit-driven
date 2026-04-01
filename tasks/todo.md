@@ -46,3 +46,24 @@
   - `plugins` are the distributable bundle for skills plus app integrations and MCP servers.
   - `build plugins` define local scaffolding and marketplace metadata for distribution.
   - `hooks` and `rules` are experimental/config-driven guardrails with narrower runtime applicability.
+
+# Global Installer Design
+
+- [x] Inspect the current host-level install surfaces for Codex and Cursor on the local machine.
+- [x] Confirm which parts of the ELF architecture must remain project-local.
+- [x] Propose 2-3 global installer approaches with trade-offs.
+- [x] Recommend the v1 approach and describe host-specific behavior.
+- [x] Present the design for approval before implementation.
+- [x] Save the approved design and implementation plan artifacts.
+
+## Review
+
+- Design approved on 2026-04-01.
+- Codex exposes stable user-level surfaces under `~/.codex/`.
+- Cursor exposes user-level surfaces under `~/.cursor/`, including `rules`, `mcp.json`, and `hooks.json`.
+- The ELF runtime state should remain project-local in `.elf/`, even if adapters become globally available.
+- Recommended v1 contract:
+  - `npm install -g elf-orchestrator`
+  - `elf global install codex|cursor|all`
+  - `elf init` per project
+  - `elf doctor` for project runtime and `elf global doctor` for host-global setup
