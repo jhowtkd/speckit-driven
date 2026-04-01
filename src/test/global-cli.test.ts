@@ -20,8 +20,8 @@ test("ELF exposes a dedicated global command tree", () => {
     encoding: "utf8",
   });
   assert.equal(globalHelp.status, 0, globalHelp.stderr ?? globalHelp.stdout);
-  assert.match(globalHelp.stdout, /install <host>/);
-  assert.match(globalHelp.stdout, /update <host>/);
+  assert.match(globalHelp.stdout, /install(?:\s+\[options\])?\s+<host>/);
+  assert.match(globalHelp.stdout, /update(?:\s+\[options\])?\s+<host>/);
   assert.match(globalHelp.stdout, /doctor(?:\s+\[options\])?\s+<host>/);
   assert.match(globalHelp.stdout, /uninstall <host>/);
   assert.match(globalHelp.stdout, /Validate host-global ELF setup/);

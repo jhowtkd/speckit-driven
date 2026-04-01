@@ -14,6 +14,10 @@ import { runMcpServe } from "./commands/mcp-serve";
 import { runAdapterInstall } from "./commands/adapter-install";
 import { runAdapterUpdate } from "./commands/adapter-update";
 import { runAdapterDoctor } from "./commands/adapter-doctor";
+import { runGlobalInstall } from "./commands/global-install";
+import { runGlobalUpdate } from "./commands/global-update";
+import { runGlobalDoctor } from "./commands/global-doctor";
+import { runGlobalUninstall } from "./commands/global-uninstall";
 
 const packageRoot = getPackageRoot();
 const version = readKitVersion(packageRoot);
@@ -181,11 +185,6 @@ adapter
     });
   });
 
-const runUnimplementedGlobalCommand = (commandName: string, host: string) => {
-  console.error(`ELF global ${commandName} ${host} is not implemented yet.`);
-  process.exit(1);
-};
-
 const global = program
   .command("global")
   .description("Manage host-global ELF installs for Codex and Cursor");
@@ -193,15 +192,17 @@ const global = program
 global
   .command("install <host>")
   .description("Install host-global ELF setup (codex, cursor, all)")
-  .action((host: string) => {
-    runUnimplementedGlobalCommand("install", host);
+  .option("--force", "overwrite existing host-global ELF-managed files")
+  .action((host: string, opts: { force?: boolean }) => {
+    runGlobalInstall(host, { force: Boolean(opts.force) });
   });
 
 global
   .command("update <host>")
   .description("Update host-global ELF setup (codex, cursor, all)")
-  .action((host: string) => {
-    runUnimplementedGlobalCommand("update", host);
+  .option("--force", "overwrite diverged host-global ELF-managed files")
+  .action((host: string, opts: { force?: boolean }) => {
+    runGlobalUpdate(host, { force: Boolean(opts.force) });
   });
 
 global
@@ -211,15 +212,15 @@ global
     "--strict",
     "fail when global host files or entries differ from the managed ELF install"
   )
-  .action((host: string) => {
-    runUnimplementedGlobalCommand("doctor", host);
+  .action((host: string, opts: { strict?: boolean }) => {
+    runGlobalDoctor(host, { strict: Boolean(opts.strict) });
   });
 
 global
   .command("uninstall <host>")
   .description("Remove host-global ELF setup (codex, cursor, all)")
   .action((host: string) => {
-    runUnimplementedGlobalCommand("uninstall", host);
+    runGlobalUninstall(host);
   });
 
 program.addHelpText(
