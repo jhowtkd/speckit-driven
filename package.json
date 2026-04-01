@@ -1,5 +1,5 @@
 {
-  "name": "elf",
+  "name": "elf-orchestrator",
   "version": "1.0.0",
   "description": "ELF orchestrator runtime: workflow state, verification, and thin host adapters.",
   "license": "MIT",
