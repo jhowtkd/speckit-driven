@@ -1,47 +1,56 @@
-# Technical decisions (v1)
+# Technical decisions (ELF v1)
 
 ## Runtime and build
 
-- **TypeScript → CommonJS** in `dist/`: stable `__dirname`, works with `bin/spec-driven-kit.js`.
+- **TypeScript → CommonJS** in `dist/`: stable `__dirname`, works with `bin/elf.js` and the `spec-driven-kit` compatibility alias.
 - **`prepublishOnly` → `build`**: publishing runs `tsc` before pack.
 
-## CLI (installer only)
+## CLI surface
 
-- **Commander** for `install` (alias `init`), `update`, `doctor`.
-- **No** `new feature` in the binary; optional **`scripts/new-feature.mjs`** for scaffolding.
+- **Primary runtime commands**: `init`, `run`, `resume`, `review`, `verify`, `mcp serve`.
+- **Adapter commands**: `adapter install`, `adapter update`, `adapter doctor` for `cursor` and `codex`.
+- **Legacy compatibility commands**: `install`, `update`, `doctor` remain available for the old Cursor-first bundle, but they are not the primary ELF workflow entrypoint.
 
-## Install and update
+## Runtime store
 
-- **`install`**: copies **`assets/cursor/`** → **`.cursor/`** and **`agents/AGENTS.md`** → **`./AGENTS.md`**. Existing files are **skipped** unless `--force`.
-- **`update`**: same merge semantics for `.cursor/` and root **`AGENTS.md`** (missing → create; identical → ignore; diverged → skip unless `--force`).
-- **Metadata**: `.cursor/spec-driven-kit.json` stores `kitVersion`, `installedAt` (preserved), `lastKitUpdate`.
+- **`elf init`** bootstraps `.elf/` and root `AGENTS.md`.
+- **Source of truth**: `.elf/` holds runtime state, workflow definitions, templates, and metadata.
+- **Runtime metadata**: `.elf/state/metadata.json` stores the installed ELF runtime version and provenance.
 
-## Doctor
+## Legacy compatibility store
 
-- Validates **every** bundled path under `.cursor/` **and** **`AGENTS.md`** at the repo root against the package.
-- **Missing** files → **error**, exit **1**.
-- **Content drift** → **warnings**, exit **0** by default; **`--strict`** treats drift as **error**, exit **1**.
+- The legacy Cursor-first bundle still uses `.cursor/spec-driven-kit.json` for compatibility metadata.
+- `install` / `update` / `doctor` continue to validate the legacy `.cursor/` payload and `AGENTS.md` for existing migrations.
 
-## Authoritative layout
+## Adapters
 
-- **Installable payload**: **`assets/cursor/`** (includes **`rules/*.mdc`**, **`commands/`**, **`templates/`**, etc.).
-- **Canonical `AGENTS.md` template**: **`agents/AGENTS.md`** in the package (also listed in npm `"files"`).
+- **Cursor adapter payload**: `assets/cursor/` installs to `.cursor/`.
+- **Codex adapter payload**: `assets/adapters/codex/` installs to `.agents/`, `codex/`, and `.codex/`.
+- The adapter bundles are thin delivery surfaces; workflow semantics live in the ELF runtime.
 
-## Optional feature scaffold
+## Doctor semantics
 
-- **`scripts/new-feature.mjs`**: sequential **001–999**, **kebab-case** slug; templates from `.cursor/templates/` with fallback to bundled templates.
+- `elf doctor` validates `.elf/` against the bundled runtime.
+- `elf adapter doctor cursor|codex` validates the installed adapter bundle against its assets.
+- Missing files are errors; drift is warnings by default and failures under `--strict`.
+
+## MCP bridge
+
+- `elf mcp serve` exposes the runtime over stdio MCP.
+- MCP tools are the shared local integration point for Codex and Cursor in v1.
+
+## Validation
+
+- `npm run validate:rules` checks both the legacy Cursor rules bundle and the Cursor adapter rules bundle.
+- Rule validation is path-aware and should stay cross-platform.
 
 ## Package paths
 
 - `getPackageRoot()` resolves from `dist/core/*.js` two levels up. Changing build layout requires updating `src/core/paths.ts`.
 
-## CI
-
-- **`npm run validate:rules`**: static checks on `assets/cursor/rules` (required `00`–`60` prefixes, `alwaysApply: true` on `00`).
-
 ## Out of scope (v1)
 
-- Telemetry, installing `experimental/modes/` into consumer projects, smart three-way merge beyond `update --force`.
+- Telemetry, installing `experimental/modes/` into consumer projects, smart three-way merge beyond `update --force`, hosted UI, cloud sync.
 
 ## Future (v1.1+)
 

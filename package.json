@@ -6,11 +6,11 @@
   "author": "Jhonatan",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jhowtkd/speckit-driven.git"
+    "url": "https://github.com/jhowtkd/elf-orchestrator.git"
   },
-  "homepage": "https://github.com/jhowtkd/speckit-driven#readme",
+  "homepage": "https://github.com/jhowtkd/elf-orchestrator#readme",
   "bugs": {
-    "url": "https://github.com/jhowtkd/speckit-driven/issues"
+    "url": "https://github.com/jhowtkd/elf-orchestrator/issues"
   },
   "type": "commonjs",
   "keywords": [

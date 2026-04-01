@@ -1,6 +1,6 @@
 # Constitution — human principles (non-normative)
 
-**Read this for onboarding.** **Authoritative agent behavior** lives in **`.cursor/rules/*.mdc`**, especially **`00-using-spec-driven.mdc`**.
+**Read this for onboarding.** **Authoritative workflow behavior** lives in the ELF runtime under **`.elf/`**; host adapters surface that behavior through Cursor rules, Codex assets, and `AGENTS.md`.
 
 ## Purpose
 
@@ -11,7 +11,7 @@ Encourage disciplined delivery: clear intent before code, proportional process, 
 - Spec before code; clarity before needless complexity.
 - Tests and checks **proportional to risk**.
 - Every meaningful change should be **reviewable** by another competent reader.
-- Operational truth in tracked artifacts (e.g. `state.json`), not only chat memory.
+- Operational truth in tracked artifacts under `.elf/`, not only chat memory or host-local state.
 - No “vibe coding” as the default delivery mode for non-trivial work.
 
 ## Artifact roles (conceptual)
@@ -22,7 +22,7 @@ Encourage disciplined delivery: clear intent before code, proportional process, 
 | Plan | How; order, risks, test strategy |
 | Tasks | Executable breakdown |
 | Verification | Exit gate with rubric and evidence |
-| State | Current progress and blockers |
+| Runtime state | Current progress, blockers, and resumable ELF execution state |
 
 ## Documentation time budget (guidance)
 
@@ -34,7 +34,7 @@ If overhead grows without clear payoff, simplify the process.
 
 ## Authority
 
-If ad-hoc shortcuts conflict with **Project Rules**, the rules win unless the user explicitly overrides. Exceptions should be explicit and scoped.
+If host-adapter guidance conflicts with the ELF runtime or explicit user overrides, the runtime wins unless the user explicitly overrides. Exceptions should be explicit and scoped.
 
 ## v1 scope
 

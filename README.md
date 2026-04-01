@@ -1,79 +1,75 @@
-# spec-driven-kit
+# ELF
 
-Open-source **spec-driven workflow** for [Cursor](https://cursor.com): install **Project Rules** (`.cursor/rules/*.mdc`), templates, optional **custom commands** (beta), and root **`AGENTS.md`**. The npm CLI is only an **installer / updater / doctor** — the product behavior lives in rules and agent instructions.
+ELF is a lightweight orchestrator runtime for spec-driven workflows. The runtime owns workflow state, verification, and replay under `.elf/`; Cursor and Codex are thin adapters that surface the same runtime through their native features.
+
+> Migration note: `spec-driven-kit` remains as a compatibility alias while existing projects move over, but new projects should use `elf-orchestrator` and the `elf` CLI.
 
 ## Requirements
 
 - Node.js **18+**
-- Cursor (recommended) for Project Rules and commands
+- Cursor or Codex only if you want host integration
 
-## Quick install
+## Quick start
 
 In your project root:
 
 ```bash
-npx spec-driven-kit install
+npm install elf-orchestrator
+npx elf-orchestrator init
+npx elf-orchestrator run --workflow phase --title "User auth"
 ```
 
-Or with a local dependency:
+If you are opening the project in Cursor or Codex, install the matching adapter:
 
 ```bash
-npm install spec-driven-kit
-npx spec-driven-kit install
+npx elf-orchestrator adapter install cursor --allow-anywhere
+npx elf-orchestrator adapter install codex --allow-anywhere
 ```
 
-- **`install`** — copies kit files into `./.cursor/` and **`./AGENTS.md`** (skips existing files unless `--force`).
-- **`init`** — deprecated alias for **`install`** (warns on stderr).
-- **`update`** — adds missing files; leaves divergent files untouched unless `--force`.
-- **`doctor`** — checks `.cursor/` and `AGENTS.md` against the bundled kit.
-
-### Doctor semantics
-
-- **Missing** required files → **non-zero exit** (failure).
-- **Content drift** (files differ from the kit) → **warnings**, **exit 0** by default.
-- **`doctor --strict`** → drift is treated as **failure** (non-zero exit).
-
-### Outside a classic repo
+To expose the local runtime over MCP:
 
 ```bash
-npx spec-driven-kit install --allow-anywhere
+npx elf-orchestrator mcp serve
 ```
 
-## Compatibility matrix (Cursor surfaces)
+## Primary commands
 
-| Surface | Location | Stability |
-|---------|-----------|-----------|
-| Project Rules | `.cursor/rules/*.mdc` | Documented |
-| Agent instructions | `AGENTS.md` (repo root) | Documented |
-| Custom commands | `.cursor/commands/*.md` | **Beta** |
-| Custom Modes | Cursor app | **Beta** — optional presets live under `experimental/modes/` in this repo only (not installed to your project in v1) |
+- `init` bootstraps `.elf/` runtime state and `AGENTS.md`.
+- `run` starts a new ELF run from the selected workflow.
+- `resume` reloads an existing run from disk.
+- `review` prints a review scaffold for a path or run id.
+- `verify` stores an independent verification result for a run.
+- `mcp serve` exposes the local ELF runtime over MCP.
+- `adapter install`, `adapter update`, and `adapter doctor` manage the Cursor and Codex adapter bundles.
 
-## Optional: scaffold a feature
+## Legacy compatibility
 
-Not part of the CLI binary:
+The older `install`, `update`, and `doctor` commands remain available for existing Cursor-first projects. They manage the legacy `.cursor/` bundle and `AGENTS.md`; new work should prefer the ELF runtime commands above.
 
-```bash
-node node_modules/spec-driven-kit/scripts/new-feature.mjs my-feature-name
-```
+## Compatibility matrix
 
-Creates `.cursor/features/NNN-my-feature-name/` from templates.
+| Surface | Location | Role |
+|---------|-----------|------|
+| Runtime store | `.elf/` | Source of truth for workflow state, artifacts, and verification |
+| Cursor adapter | `.cursor/rules/*.mdc`, `.cursor/commands/*.md`, `AGENTS.md` | Cursor-facing delivery surface |
+| Codex adapter | `.agents/skills/`, `codex/rules/`, `.codex/` | Codex-facing delivery surface |
+| MCP bridge | `elf mcp serve` | Shared local bridge into the runtime |
 
-## Development of this package
+## Development
 
 ```bash
 npm install
 npm run build
 npm test
 npm run validate:rules
-node bin/spec-driven-kit.js --help
+node bin/elf.js --help
 ```
 
 ## Documentation
 
-- Design spec: [docs/superpowers/specs/2026-03-31-cursor-spec-driven-kit-design.md](docs/superpowers/specs/2026-03-31-cursor-spec-driven-kit-design.md)
-- Implementation plan: [docs/plans/2026-03-31-cursor-first-spec-driven-kit.md](docs/plans/2026-03-31-cursor-first-spec-driven-kit.md)
+- Design spec: [docs/plans/2026-04-01-elf-orchestrator-first-design.md](docs/plans/2026-04-01-elf-orchestrator-first-design.md)
 - Technical notes: [docs/TECH.md](docs/TECH.md)
-- Human principles (non-normative): [docs/constitution.md](docs/constitution.md)
+- Human principles: [docs/constitution.md](docs/constitution.md)
 
 ## License
 
