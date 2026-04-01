@@ -29,15 +29,42 @@ test("E2E CLI Flow", async (t) => {
   await t.test("install --allow-anywhere", () => {
     const out = runCmd("install --allow-anywhere");
     assert.match(out, /Wrote \.cursor\/spec-driven-kit\.json/);
+    assert.match(out, /elf init/);
+    assert.doesNotMatch(out, /spec-driven-kit doctor/);
     assert.ok(existsSync(join(cwd, ".cursor", "spec-driven-kit.json")));
     assert.ok(existsSync(join(cwd, ".cursor", "constitution.md")));
     assert.ok(existsSync(join(cwd, "AGENTS.md")));
     assert.ok(existsSync(join(cwd, ".cursor", "rules", "00-using-spec-driven.mdc")));
   });
 
-  await t.test("doctor --strict on fresh install", () => {
+  await t.test("adapter install cursor --allow-anywhere", () => {
+    const adapterCwd = mkdtempSync(join(tmpdir(), "elf-cursor-adapter-e2e-"));
+    t.after(() => rmSync(adapterCwd, { recursive: true, force: true }));
+    const out = execSync(`node "${binPath}" adapter install cursor --allow-anywhere`, {
+      cwd: adapterCwd,
+      encoding: "utf8",
+    });
+    assert.match(out, /elf adapter install cursor/);
+    assert.ok(existsSync(join(adapterCwd, ".cursor", "rules", "00-using-elf.mdc")));
+    assert.ok(existsSync(join(adapterCwd, ".cursor", "commands", "spec-start.md")));
+    const doctorOut = execSync(`node "${binPath}" adapter doctor cursor --strict`, {
+      cwd: adapterCwd,
+      encoding: "utf8",
+    });
+    assert.match(doctorOut, /Result: OK/);
+  });
+
+  await t.test("init bootstraps elf runtime", () => {
+    const out = runCmd("init --allow-anywhere");
+    assert.match(out, /elf init/);
+    assert.ok(existsSync(join(cwd, ".elf", "config.toml")));
+    assert.ok(existsSync(join(cwd, ".elf", "state", "metadata.json")));
+  });
+
+  await t.test("doctor --strict on elf runtime", () => {
     const out = runCmd("doctor --strict");
     assert.match(out, /Result: OK/);
+    assert.match(out, /\.elf/);
   });
 
   await t.test("update on identical files", () => {
@@ -47,8 +74,8 @@ test("E2E CLI Flow", async (t) => {
     assert.match(out, /Updated: 0/);
   });
 
-  await t.test("init alias still runs install", () => {
-    const cwd2 = mkdtempSync(join(tmpdir(), "spec-driven-kit-init-alias-"));
+  await t.test("init bootstraps runtime store", () => {
+    const cwd2 = mkdtempSync(join(tmpdir(), "elf-init-bootstrap-"));
     t.after(() => rmSync(cwd2, { recursive: true, force: true }));
     const r = spawnSync(
       process.execPath,
@@ -56,7 +83,9 @@ test("E2E CLI Flow", async (t) => {
       { cwd: cwd2, encoding: "utf8" }
     );
     assert.strictEqual(r.status, 0, r.stderr ?? r.stdout);
-    assert.match(String(r.stderr), /deprecated/i);
+    assert.match(r.stdout, /elf init/);
+    assert.ok(existsSync(join(cwd2, ".elf", "config.toml")));
+    assert.ok(existsSync(join(cwd2, ".elf", "state", "metadata.json")));
     assert.ok(existsSync(join(cwd2, "AGENTS.md")));
   });
 });

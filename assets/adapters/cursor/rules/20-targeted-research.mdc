@@ -1,0 +1,46 @@
+---
+description: >-
+  Use quando houver integração nova, tecnologia nova ou incerteza técnica
+  material. Produza `research.md` curto e útil para reduzir risco.
+alwaysApply: false
+---
+
+# Research direcionado
+
+## Objetivo
+
+Produzir `research.md` só o suficiente para destravar decisões de `plan.md`.
+
+## Quando usar
+
+Use quando houver:
+
+- integração externa nova;
+- tecnologia ou stack pouco conhecida;
+- dependência externa relevante;
+- incerteza técnica material.
+
+## Estrutura
+
+- motivo do research;
+- perguntas;
+- hipóteses;
+- achados;
+- impacto na solução;
+- decisões derivadas;
+- ajustes necessários na spec ou no plan.
+
+## Regras
+
+1. Pesquise só o necessário para remover risco real.
+2. Converta achados em decisões práticas.
+3. Não use research para adiar decisão.
+
+## Restrições
+
+- Não implemente código.
+- Não deixe o research virar exploração infinita.
+
+## Resultado esperado
+
+Um `research.md` que deixe o plan mais seguro e objetivo.

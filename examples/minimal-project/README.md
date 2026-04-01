@@ -1,27 +1,33 @@
 # Minimal example
 
-This folder is a **blank sample**: there is no vendored `.cursor/` here on purpose.
+This folder is intentionally blank. It exists so you can bootstrap an ELF runtime in a fresh project without any preloaded `.elf/` or adapter state.
 
-## Try the kit
+## Try ELF
 
-From an empty directory (or this folder):
+From an empty directory, or from this folder:
 
 ```bash
 npm init -y
-npm install spec-driven-kit
-npx spec-driven-kit install
-npx spec-driven-kit doctor
+npm install elf-orchestrator
+npx elf-orchestrator init
+npx elf-orchestrator run --workflow phase --title "Demo feature"
 ```
 
-Optional scaffold:
+If you want host integration, add the adapter that matches your editor:
 
 ```bash
-node node_modules/spec-driven-kit/scripts/new-feature.mjs demo-feature
+npx elf-orchestrator adapter install cursor --allow-anywhere
+npx elf-orchestrator adapter install codex --allow-anywhere
 ```
 
-Then open the repo in **Cursor** and use Project Rules under `.cursor/rules/` and `AGENTS.md` at the root.
+To expose the runtime over MCP:
+
+```bash
+npx elf-orchestrator mcp serve
+```
 
 ## Notes
 
-- **Custom commands** under `.cursor/commands/` are **beta** in Cursor; rules remain the source of truth.
-- See the main repository README for the stability matrix.
+- `.elf/` is the source of truth for workflow state and verification.
+- `spec-driven-kit` still exists as a compatibility alias while older projects migrate.
+- Cursor and Codex are adapters, not the workflow engine.

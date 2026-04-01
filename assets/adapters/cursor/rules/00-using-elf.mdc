@@ -1,0 +1,37 @@
+---
+description: >-
+  Regra base do adapter Cursor para o runtime ELF. A execução real vive em
+  `.elf/`, não em regras locais.
+alwaysApply: true
+---
+
+# Adapter Cursor para ELF
+
+Use este bundle apenas para orientar o Cursor. O runtime autoritativo do fluxo
+fica no ELF.
+
+## Runtime
+
+- `elf init` inicializa `.elf/`
+- `elf run` abre uma execução do workflow
+- `elf resume` retoma um run salvo
+- `elf review` gera a estrutura de revisão
+- `elf verify` grava a verificação do run
+- `elf mcp serve` expõe o bridge local para o Cursor
+
+## Fluxo de trabalho
+
+Constitution → Spec → Clarify → Research → Plan → Tasks → Execute → Verify → Final Review
+
+## Regras
+
+- Não trate `.cursor/rules` como runtime.
+- Não replique semântica de workflow fora do ELF.
+- Use `.cursor/features/<FEATURE_ID>/` e `.cursor/templates/` só para escrita guiada.
+- Mantenha o adapter fino e focado em instruções.
+
+## Gates
+
+- Sem código antes de spec clara.
+- Sem execução antes de plan e tasks.
+- Sem conclusão antes de verification >= 90.

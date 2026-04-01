@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "runtime": "elf",
+  "bridge": "elf mcp serve",
+  "notes": [
+    "Use elf init before interacting with the runtime.",
+    "Use ELF as the source of truth for workflow state."
+  ]
+}

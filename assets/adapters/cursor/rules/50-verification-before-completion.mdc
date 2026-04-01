@@ -1,0 +1,41 @@
+---
+description: >-
+  Use quando a implementação estiver pronta para fechamento. Preencha
+  `verification.md` e só avance se a nota final permitir.
+alwaysApply: false
+---
+
+# Verification before completion
+
+## Objetivo
+
+Validar a feature com a rubrica oficial e decidir se pode ser concluída.
+
+## Arquivos de referência
+
+- `.cursor/features/<FEATURE_ID>/spec.md`
+- `.cursor/features/<FEATURE_ID>/plan.md`
+- `.cursor/features/<FEATURE_ID>/tasks.md`
+- `.cursor/features/<FEATURE_ID>/verification.md`
+- evidências de execução
+
+## Rubrica
+
+| Dimensão | Peso |
+|-----------|------|
+| Aderência à spec | 25 |
+| Aderência ao plan | 20 |
+| Qualidade do output | 20 |
+| Testes e evidências | 20 |
+| Reviewability e clareza | 15 |
+
+## Regras
+
+1. Justifique cada score com evidências.
+2. Liste os testes rodados.
+3. Aponte lacunas reais.
+4. Feche apenas com total >= 90.
+
+## Resultado esperado
+
+`verification.md` completo, com score, evidências e veredito.
