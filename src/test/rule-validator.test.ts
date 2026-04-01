@@ -11,7 +11,8 @@ test("validate:rules checks both legacy and ELF adapter bundles", () => {
     cwd: root,
     encoding: "utf8",
   });
+  const normalized = out.split("\\").join("/");
 
-  assert.match(out, /assets\/cursor\/rules/);
-  assert.match(out, /assets\/adapters\/cursor\/rules/);
+  assert.match(normalized, /assets\/cursor\/rules/);
+  assert.match(normalized, /assets\/adapters\/cursor\/rules/);
 });

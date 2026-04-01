@@ -19,3 +19,4 @@
 - When a smoke test covers a migration path next to a legacy path, use a fresh temp directory for file-presence assertions so earlier subtests do not contaminate the adapter contract.
 - When shipping a new adapter bundle beside a legacy bundle, remove the known conflicting legacy file during install/update and make doctor fail if it is manually reintroduced.
 - Static rule validation must cover the new adapter bundle as soon as it ships, not only the legacy compatibility bundle.
+- Tests that assert validator output paths should normalize path separators before matching so Windows and POSIX output both pass.
