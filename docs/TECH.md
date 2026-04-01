@@ -1,42 +1,48 @@
-# Decisões técnicas (v1)
+# Technical decisions (v1)
 
-## Runtime e build
+## Runtime and build
 
-- **TypeScript compilado para CommonJS** em `dist/`: caminhos estáveis com `__dirname`, compatível com `require()` no shim `bin/spec-driven-kit.js`, sem exigir `"type": "module"` nos consumidores.
-- **`prepare` → `build`**: ao instalar o pacote do npm, o `dist/` é gerado localmente (depende de `devDependencies` + TypeScript no momento do `npm install` do pacote publicado — padrão comum; alternativa v1.1 seria commitar `dist/` ou usar `prepublishOnly` apenas).
+- **TypeScript → CommonJS** in `dist/`: stable `__dirname`, works with `bin/spec-driven-kit.js`.
+- **`prepublishOnly` → `build`**: publishing runs `tsc` before pack.
 
-## CLI
+## CLI (installer only)
 
-- **Commander** (única dependência de runtime além do Node): parsing de subcomandos (`new feature <nome>`), help e version com baixo custo e manutenção familiar. Alternativa zero-deps (`util.parseArgs`) foi descartada para manter legibilidade dos subcomandos aninhados.
+- **Commander** for `install` (alias `init`), `update`, `doctor`.
+- **No** `new feature` in the binary; optional **`scripts/new-feature.mjs`** for scaffolding.
 
-## Instalação e atualização
+## Install and update
 
-- **Init**: copia tudo de `assets/cursor/` → `.cursor/`; arquivos existentes são **pulados** salvo `--force` (evita sobrescrever customizações acidentalmente).
-- **Update**: arquivos em falta são criados; idênticos ao bundle são ignorados; **divergentes** são listados e só sobrescritos com `--force`. Não há merge semântico nem três-vias na v1.
-- **Metadados**: `.cursor/spec-driven-kit.json` guarda `kitVersion`, `installedAt` (preservado) e `lastKitUpdate`.
+- **`install`**: copies **`assets/cursor/`** → **`.cursor/`** and **`agents/AGENTS.md`** → **`./AGENTS.md`**. Existing files are **skipped** unless `--force`.
+- **`update`**: same merge semantics for `.cursor/` and root **`AGENTS.md`** (missing → create; identical → ignore; diverged → skip unless `--force`).
+- **Metadata**: `.cursor/spec-driven-kit.json` stores `kitVersion`, `installedAt` (preserved), `lastKitUpdate`.
 
 ## Doctor
 
-- Presença de todos os arquivos do bundle sob `.cursor/`.
-- `--strict` compara conteúdo binário com o pacote (útil para detectar drift); avisos não falham o comando, erros (paths em falta) falham com exit code 1.
+- Validates **every** bundled path under `.cursor/` **and** **`AGENTS.md`** at the repo root against the package.
+- **Missing** files → **error**, exit **1**.
+- **Content drift** → **warnings**, exit **0** by default; **`--strict`** treats drift as **error**, exit **1**.
 
-## Nova feature
+## Authoritative layout
 
-- Índice **sequencial 001–999** por prefixo numérico em diretórios existentes sob `.cursor/features/`.
-- Nome normalizado para **kebab-case**.
-- Templates lidos de `.cursor/templates/` no projeto (pós-init); se ausentes, usa os templates do bundle (fallback para repositórios corrompidos parcialmente).
+- **Installable payload**: **`assets/cursor/`** (includes **`rules/*.mdc`**, **`commands/`**, **`templates/`**, etc.).
+- **Canonical `AGENTS.md` template**: **`agents/AGENTS.md`** in the package (also listed in npm `"files"`).
 
-## Caminhos do pacote
+## Optional feature scaffold
 
-- `getPackageRoot()` assume que o código vive em `dist/core/*.js` (dois níveis acima até a raiz do pacote). Qualquer mudança de layout de build exige ajustar `src/core/paths.ts`.
+- **`scripts/new-feature.mjs`**: sequential **001–999**, **kebab-case** slug; templates from `.cursor/templates/` with fallback to bundled templates.
 
-## Fora de escopo na v1
+## Package paths
 
-- Telemetria, presets por stack, integração GitHub, instalação global da skill em `~/.cursor/skills/`, motor de merge inteligente.
+- `getPackageRoot()` resolves from `dist/core/*.js` two levels up. Changing build layout requires updating `src/core/paths.ts`.
 
-## v1.1 sugerido
+## CI
 
-- `prepublishOnly` + artefatos buildados publicados **ou** documentar claramente consumo só via Git com `npm install` no clone.
-- Comando `spec-driven-kit doctor --fix` para recriar só arquivos faltantes.
-- Opção `init --dry-run`.
-- Testes automatizados (Vitest) sobre init/update/doctor em diretório temporário.
+- **`npm run validate:rules`**: static checks on `assets/cursor/rules` (required `00`–`60` prefixes, `alwaysApply: true` on `00`).
+
+## Out of scope (v1)
+
+- Telemetry, installing `experimental/modes/` into consumer projects, smart three-way merge beyond `update --force`.
+
+## Future (v1.1+)
+
+- `doctor --fix` for missing files only; `install --dry-run`.

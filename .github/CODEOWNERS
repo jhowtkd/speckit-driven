@@ -1,0 +1,12 @@
+# Core workflow and install path — adjust @username to your maintainer team.
+/assets/cursor/rules/ @jhowtkd
+/agents/AGENTS.md @jhowtkd
+/src/cli.ts @jhowtkd
+/src/commands/ @jhowtkd
+/src/core/install-files.ts @jhowtkd
+/src/core/install-agents.ts @jhowtkd
+/src/core/doctor-check.ts @jhowtkd
+/src/core/paths.ts @jhowtkd
+/src/core/versioning.ts @jhowtkd
+/docs/TECH.md @jhowtkd
+/docs/superpowers/specs/ @jhowtkd

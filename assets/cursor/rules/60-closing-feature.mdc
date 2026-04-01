@@ -1,0 +1,50 @@
+---
+description: >-
+  Use when: verification.md exists; final holistic review before marking the feature done.
+alwaysApply: false
+---
+
+# Closing the feature
+
+## Goal
+
+Review the feature end-to-end and emit a **final verdict** before closure.
+
+## Reference files
+
+- `.cursor/features/<FEATURE_ID>/spec.md`
+- `.cursor/features/<FEATURE_ID>/plan.md`
+- `.cursor/features/<FEATURE_ID>/tasks.md`
+- `.cursor/features/<FEATURE_ID>/state.json`
+- `.cursor/features/<FEATURE_ID>/verification.md`
+- `.cursor/features/<FEATURE_ID>/decision-log.md` (if present)
+
+## Review
+
+- Coherence across spec, plan, and tasks
+- Output matches stated goal
+- Evidence quality
+- Clarity for future readers
+- Remaining risks or follow-ups
+
+## Final checklist
+
+- [ ] Spec satisfied (or gaps explicitly documented)
+- [ ] Plan respected or deviations justified
+- [ ] Tasks done or pending items recorded
+- [ ] Tests proportional to risk — executed or justified
+- [ ] Verification **≥ 90**
+- [ ] `state.json` updated
+- [ ] Output reviewable
+- [ ] No critical open blocker
+
+## Verdict (choose one)
+
+- **Completed**
+- **Completed with caveats** (document caveats)
+- **Needs revision** (what must change)
+- **Not completed**
+
+## Expected outcome
+
+Clear final verdict; if **Completed** or **Completed with caveats**, feature may be archived or handed off per project convention.

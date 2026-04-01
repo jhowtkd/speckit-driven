@@ -1,0 +1,38 @@
+---
+description: >-
+  Use when: the request is ambiguous; scope is not clearly defined; no spec exists yet.
+  Shape the spec and clarify before plan/tasks/code.
+alwaysApply: false
+---
+
+# Brainstorming and spec (pre-plan)
+
+## Goal
+
+Produce or refine a **clear, operational `spec.md`** without premature implementation, architecture deep-dive, or task breakdown.
+
+## Target file
+
+- `.cursor/features/<FEATURE_ID>/spec.md`
+
+## When to apply full depth
+
+Per **`00-using-spec-driven`**, use the full spec/clarify loop when ambiguity, medium+ scope, or technical risk applies.
+
+## Instructions
+
+1. Work from **`.cursor/features/<FEATURE_ID>/spec.md`** (create from template if missing).
+2. Fill or refine using: context, problem, goal, scope, out of scope, main flows/stories, acceptance criteria, risks, dependencies, clarifications.
+3. **Clarify:** find vague, contradictory, or incomplete areas; list critical questions; prefer the safest, simplest resolution; update a **Clarifications** section; flag remaining material uncertainty.
+4. **Constitution check:** against **`docs/constitution.md`** — spec-before-code, proportional complexity, tests match risk, reviewability. List gaps; propose objective spec edits.
+
+## Rules
+
+- Focus on **what** and **why**, not deep **how** yet.
+- Acceptance criteria must be **verifiable**.
+- Do **not** write `plan.md` or `tasks.md` in this phase.
+- Do **not** implement code.
+
+## Expected outcome
+
+A `spec.md` sufficient for consistent planning in the next phase (rule **`30-writing-plan`**).

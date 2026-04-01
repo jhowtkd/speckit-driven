@@ -14,23 +14,25 @@ export type DoctorReport = {
 };
 
 /**
- * Validates target `.cursor/` against bundled assets (presence + optional byte match).
+ * Validates target `.cursor/` and root `AGENTS.md` against bundled kit.
+ * Content drift: warn by default; --strict promotes drift to errors.
  */
 export function runDoctor(options: {
   cwd: string;
   assetsCursorDir: string;
+  agentsTemplatePath: string;
   strictContent: boolean;
 }): DoctorReport {
-  const { cwd, assetsCursorDir, strictContent } = options;
-  const cursorDir = join(cwd, ".cursor");
+  const { cwd, assetsCursorDir, agentsTemplatePath, strictContent } = options;
   const issues: DoctorIssue[] = [];
   const missing: string[] = [];
   const mismatched: string[] = [];
 
+  const cursorDir = join(cwd, ".cursor");
   if (!existsSync(cursorDir)) {
     issues.push({
       kind: "error",
-      message: "Missing .cursor/ — run spec-driven-kit init",
+      message: "Missing .cursor/ — run spec-driven-kit install",
     });
     return {
       ok: false,
@@ -46,7 +48,7 @@ export function runDoctor(options: {
     issues.push({
       kind: "warn",
       message:
-        "Missing .cursor/spec-driven-kit.json (kit metadata). Run init or update.",
+        "Missing .cursor/spec-driven-kit.json (kit metadata). Run install or update.",
     });
   }
 
@@ -65,13 +67,35 @@ export function runDoctor(options: {
       });
       continue;
     }
-    if (strictContent && !fileBuffersEqual(src, dest)) {
+    if (!fileBuffersEqual(src, dest)) {
       mismatched.push(rel);
+      const msg = `Content differs from installed kit: .cursor/${rel} (compare or run update --force)`;
       issues.push({
-        kind: "warn",
-        message: `Content differs from installed kit: .cursor/${rel} (compare or run update --force)`,
+        kind: strictContent ? "error" : "warn",
+        message: msg,
       });
     }
+  }
+
+  const agentsDest = join(cwd, "AGENTS.md");
+  checkedFiles += 1;
+  if (!existsSync(agentsDest)) {
+    missing.push("AGENTS.md");
+    issues.push({
+      kind: "error",
+      message:
+        "Kit file missing in project: AGENTS.md (run spec-driven-kit install)",
+    });
+  } else if (
+    existsSync(agentsTemplatePath) &&
+    !fileBuffersEqual(agentsTemplatePath, agentsDest)
+  ) {
+    mismatched.push("AGENTS.md");
+    issues.push({
+      kind: strictContent ? "error" : "warn",
+      message:
+        "Content differs from installed kit: AGENTS.md (compare or run update --force)",
+    });
   }
 
   const ok = !issues.some((i) => i.kind === "error");

@@ -1,0 +1,86 @@
+---
+description: Core spec-driven workflow — gates, artifacts, verification, semi-strict enforcement
+alwaysApply: true
+---
+
+# Spec-driven workflow (core)
+
+Operate within **`.cursor/features/<FEATURE_ID>/`** when doing feature work. Use templates from **`.cursor/templates/`**.
+
+## Human constitution (non-authoritative)
+
+For principles and onboarding, read **`docs/constitution.md`** if present. **This rule and other `.cursor/rules` are authoritative** for agent behavior and gates.
+
+## Enforcement profile: semi-strict (default)
+
+Do **not** force the full artifact pipeline for every trivial or single-file change.
+
+Apply **full spec-driven discipline** (mandatory artifacts, phases, clarify/research when needed) when **any** of:
+
+- the request is **ambiguous** or underspecified;
+- scope is **medium or larger** (multi-file, new behavior, or non-trivial behavior change);
+- **technical risk** is material (new integration, unfamiliar subsystem, security- or data-sensitive change).
+
+## Mandatory flow
+
+`Constitution (human doc) → Spec → Clarify (if needed) → Research (if needed) → Plan → Tasks → Execute → Verify → Final Review`
+
+## Hard gates
+
+- **No code / implementation** before a clear **`spec.md`** for the feature.
+- **Implementation must not start** without:
+  - a **concrete** **`plan.md`**, and
+  - **explicit, ordered, actionable** tasks in **`tasks.md`**.
+- **No execution** before **plan** and **tasks** exist and are aligned with the spec.
+- **No completion** before **verification score ≥ 90** (see rule `50`).
+- **No hidden scope expansion** — update spec/plan/tasks (and decision log if relevant).
+- **No state only in memory** — keep **`state.json`** truthful.
+
+## If required artifacts are missing
+
+Before continuing feature work, ensure the feature folder exists and mandatory files are present. If missing, **create them from `.cursor/templates/`** (or the `spec-start` command when used).
+
+Mandatory per feature:
+
+- `spec.md`, `plan.md`, `tasks.md`, `state.json`
+
+Optional:
+
+- `research.md`, `verification.md`, `decision-log.md`
+
+## Constitution alignment check (early)
+
+When a feature draft exists, check alignment with project principles (see **`docs/constitution.md`**): spec-before-code, proportional complexity, tests match risk, reviewability, no structural improvisation. List misalignments and propose **objective spec updates** — do not implement until resolved or explicitly deferred in writing.
+
+## Research rule
+
+Research is **mandatory** when there is: new integration, new language, new technology, relevant external dependency, or **material technical uncertainty**. Optional for small, well-understood changes.
+
+## Testing rule
+
+Tests must be proportional to risk. “Seems to work” is not evidence.
+
+## Verification rule (summary)
+
+| Dimension | Weight |
+|-----------|--------|
+| Spec adherence | 25 |
+| Plan adherence | 20 |
+| Output quality | 20 |
+| Tests and evidence | 20 |
+| Reviewability and clarity | 15 |
+
+Bands: 0–59 failed · 60–79 incomplete · 80–89 acceptable, not complete · **90–100 complete**.  
+Detail and scoring steps: invoke rule **`50-verification-before-completion`**.
+
+## Execution rules (summary)
+
+Follow approved scope; record trade-offs; expected tests per task; do not mark done without evidence; if reality diverges from the plan, **update the documents**. Full execution discipline: rule **`40-executing-plan`**.
+
+## Anti-patterns
+
+Do not: start from code; redefine scope mid-flight without updating spec; use vague tasks; add abstraction without need; use research to avoid decisions; treat verification as ceremony; mark progress that did not happen.
+
+## Final exit condition
+
+A feature is complete only when: output is reviewable; tests executed or justified; evidence registered; **verification score ≥ 90**; no critical blocker remains. Final checklist: rule **`60-closing-feature`**.

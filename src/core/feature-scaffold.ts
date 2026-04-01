@@ -69,7 +69,7 @@ export function scaffoldFeature(options: {
   const projectCursor = join(cwd, ".cursor");
   if (!existsSync(projectCursor)) {
     throw new Error(
-      'Missing .cursor/. Run "spec-driven-kit init" in this repository first.'
+      'Missing .cursor/. Run "spec-driven-kit install" in this repository first.'
     );
   }
 

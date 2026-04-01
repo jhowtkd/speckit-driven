@@ -1,22 +1,29 @@
 import { runDoctor } from "../core/doctor-check";
-import { getAssetsCursorDir } from "../core/paths";
+import { getAgentsTemplatePath, getAssetsCursorDir } from "../core/paths";
 
 export function runDoctorCmd(cwd: string, opts: { strict: boolean }): void {
   const assetsCursorDir = getAssetsCursorDir();
   const report = runDoctor({
     cwd,
     assetsCursorDir,
+    agentsTemplatePath: getAgentsTemplatePath(),
     strictContent: opts.strict,
   });
 
   console.log("spec-driven-kit doctor");
-  console.log(`Checked ${report.checkedFiles} bundled asset path(s) against .cursor/`);
+  console.log(
+    `Checked ${report.checkedFiles} path(s) (.cursor/ + AGENTS.md) against bundled kit`
+  );
   if (report.missing.length) {
     console.log("\nMissing:");
     for (const m of report.missing) console.log(`  - ${m}`);
   }
   if (report.mismatched.length) {
-    console.log("\nMismatched (--strict):");
+    console.log(
+      opts.strict
+        ? "\nDrift (strict — treated as failure):"
+        : "\nDrift (warnings only; use --strict to fail on mismatch):"
+    );
     for (const m of report.mismatched) console.log(`  ~ ${m}`);
   }
   if (report.issues.length) {

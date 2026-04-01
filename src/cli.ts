@@ -2,8 +2,7 @@
 import { Command } from "commander";
 import { getPackageRoot } from "./core/paths";
 import { readKitVersion } from "./core/versioning";
-import { runInit } from "./commands/init";
-import { runNewFeature } from "./commands/new-feature";
+import { runInstall } from "./commands/install";
 import { runDoctorCmd } from "./commands/doctor";
 import { runUpdate } from "./commands/update";
 
@@ -14,41 +13,51 @@ const program = new Command();
 program
   .name("spec-driven-kit")
   .description(
-    "Spec-Driven Coding MVP — install constitutions, templates, and prompts into .cursor/"
+    "Spec-driven kit for Cursor — install .cursor/rules, templates, and AGENTS.md"
   )
   .version(version, "-V, --version", "print CLI and kit package version");
 
-program
-  .command("init")
-  .description("Install kit files into ./.cursor/")
-  .option("--force", "overwrite existing kit files")
-  .option(
-    "--allow-anywhere",
-    "skip check for .git or package.json (use with care)"
-  )
-  .action((opts: { force?: boolean; allowAnywhere?: boolean }) => {
-    runInit(process.cwd(), {
-      force: Boolean(opts.force),
-      allowAnywhere: Boolean(opts.allowAnywhere),
-    });
-  });
+const installOpts = (cmd: Command) =>
+  cmd
+    .option("--force", "overwrite existing kit files")
+    .option(
+      "--allow-anywhere",
+      "skip check for .git or package.json (use with care)"
+    );
 
-const cmdNew = new Command("new").description("Create scaffold artifacts");
-cmdNew
-  .command("feature")
-  .argument("<name>", "feature slug, e.g. login-flow")
-  .description("Create .cursor/features/NNN-<slug>/ with spec, plan, tasks, state")
-  .action((name: string) => {
-    runNewFeature(process.cwd(), name);
-  });
-program.addCommand(cmdNew);
+installOpts(
+  program
+    .command("install")
+    .description("Install kit files into ./.cursor/ and ./AGENTS.md")
+    .action((opts: { force?: boolean; allowAnywhere?: boolean }) => {
+      runInstall(process.cwd(), {
+        force: Boolean(opts.force),
+        allowAnywhere: Boolean(opts.allowAnywhere),
+      });
+    })
+);
+
+installOpts(
+  program
+    .command("init")
+    .description("[Deprecated] Alias for install")
+    .action((opts: { force?: boolean; allowAnywhere?: boolean }) => {
+      console.warn(
+        "warning: `init` is deprecated; use `spec-driven-kit install`.\n"
+      );
+      runInstall(process.cwd(), {
+        force: Boolean(opts.force),
+        allowAnywhere: Boolean(opts.allowAnywhere),
+      });
+    })
+);
 
 program
   .command("doctor")
-  .description("Validate .cursor/ against the bundled kit")
+  .description("Validate .cursor/ and AGENTS.md against the bundled kit")
   .option(
     "--strict",
-    "compare file contents to the package (warn on drift)"
+    "fail when file contents differ from the package (default: warn on drift)"
   )
   .action((opts: { strict?: boolean }) => {
     runDoctorCmd(process.cwd(), { strict: Boolean(opts.strict) });
