@@ -3,6 +3,10 @@ import { Command } from "commander";
 import { getPackageRoot } from "./core/paths";
 import { readKitVersion } from "./core/versioning";
 import { runInit } from "./commands/init";
+import { runElfWorkflow } from "./commands/run";
+import { resumeElfRun } from "./commands/resume";
+import { reviewElfTarget } from "./commands/review";
+import { runVerify } from "./commands/verify";
 import { runInstall } from "./commands/install";
 import { runDoctorCmd } from "./commands/doctor";
 import { runUpdate } from "./commands/update";
@@ -38,6 +42,63 @@ installOpts(
     })
 );
 
+program
+  .command("run")
+  .description("Create and start an ELF runtime run")
+  .option("--workflow <id>", "workflow id to run", "phase")
+  .requiredOption("--title <title>", "run title / phase title")
+  .action((opts: { workflow?: string; title?: string }) => {
+    try {
+      runElfWorkflow(process.cwd(), {
+        workflowId: String(opts.workflow ?? "phase"),
+        title: String(opts.title ?? ""),
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(message);
+      process.exit(1);
+    }
+  });
+
+program
+  .command("resume <runId>")
+  .description("Reload an existing ELF run state")
+  .action((runId: string) => {
+    try {
+      resumeElfRun(process.cwd(), runId);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(message);
+      process.exit(1);
+    }
+  });
+
+program
+  .command("review <target>")
+  .description("Print a review scaffold for a path or run id")
+  .action((target: string) => {
+    try {
+      reviewElfTarget(process.cwd(), target);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(message);
+      process.exit(1);
+    }
+  });
+
+program
+  .command("verify <runId>")
+  .description("Verify a run and persist the verifier result")
+  .action((runId: string) => {
+    try {
+      runVerify(process.cwd(), runId);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(message);
+      process.exit(1);
+    }
+  });
+
 installOpts(
   program
     .command("install")
@@ -52,10 +113,10 @@ installOpts(
 
 program
   .command("doctor")
-  .description("Validate .cursor/ and AGENTS.md against the bundled kit")
+  .description("Validate .elf/ against the bundled ELF runtime")
   .option(
     "--strict",
-    "fail when file contents differ from the package (default: warn on drift)"
+    "fail when file contents differ from the runtime bundle (default: warn on drift)"
   )
   .action((opts: { strict?: boolean }) => {
     runDoctorCmd(process.cwd(), { strict: Boolean(opts.strict) });

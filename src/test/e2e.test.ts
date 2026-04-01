@@ -35,9 +35,17 @@ test("E2E CLI Flow", async (t) => {
     assert.ok(existsSync(join(cwd, ".cursor", "rules", "00-using-spec-driven.mdc")));
   });
 
-  await t.test("doctor --strict on fresh install", () => {
+  await t.test("init bootstraps elf runtime", () => {
+    const out = runCmd("init --allow-anywhere");
+    assert.match(out, /elf init/);
+    assert.ok(existsSync(join(cwd, ".elf", "config.toml")));
+    assert.ok(existsSync(join(cwd, ".elf", "state", "metadata.json")));
+  });
+
+  await t.test("doctor --strict on elf runtime", () => {
     const out = runCmd("doctor --strict");
     assert.match(out, /Result: OK/);
+    assert.match(out, /\.elf/);
   });
 
   await t.test("update on identical files", () => {

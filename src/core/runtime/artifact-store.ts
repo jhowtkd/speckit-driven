@@ -35,6 +35,10 @@ export function getRunEventsPath(cwd: string, runId: string): string {
   return join(getRunDir(cwd, runId), "events.jsonl");
 }
 
+export function getRunVerifierPath(cwd: string, runId: string): string {
+  return join(getRunDir(cwd, runId), "verifier.json");
+}
+
 export function getCurrentRunPath(cwd: string): string {
   return join(getStateDir(cwd), "current-run.json");
 }
