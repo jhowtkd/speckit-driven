@@ -11,11 +11,11 @@ const version = readKitVersion(packageRoot);
 
 const program = new Command();
 program
-  .name("spec-driven-kit")
+  .name("elf")
   .description(
-    "Spec-driven kit for Cursor — install .cursor/rules, templates, and AGENTS.md"
+    "ELF orchestrator runtime — install runtime assets, manage workflows, and keep host adapters thin"
   )
-  .version(version, "-V, --version", "print CLI and kit package version");
+  .version(version, "-V, --version", "print ELF runtime version");
 
 const installOpts = (cmd: Command) =>
   cmd

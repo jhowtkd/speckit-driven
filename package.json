@@ -1,7 +1,7 @@
 {
-  "name": "spec-driven-kit",
+  "name": "elf",
   "version": "1.0.0",
-  "description": "Cursor-first spec-driven kit: Project Rules (.mdc), AGENTS.md, templates; CLI install/update/doctor only.",
+  "description": "ELF orchestrator runtime: workflow state, verification, and thin host adapters.",
   "license": "MIT",
   "author": "Jhonatan",
   "repository": {
@@ -14,15 +14,18 @@
   },
   "type": "commonjs",
   "keywords": [
-    "cursor",
-    "spec-driven",
+    "elf",
+    "orchestrator",
     "cli",
-    "templates"
+    "mcp",
+    "cursor",
+    "codex"
   ],
   "engines": {
     "node": ">=18"
   },
   "bin": {
+    "elf": "bin/elf.js",
     "spec-driven-kit": "bin/spec-driven-kit.js"
   },
   "files": [
