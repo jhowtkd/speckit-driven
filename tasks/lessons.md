@@ -14,3 +14,4 @@
 - Runtime commands must never create partial `.elf/` state; require a valid initialized runtime first or bootstrap all required runtime files before writing run state.
 - When keeping a legacy compatibility command during migration, keep its guidance consistent with the commands that actually exist so users are not sent into guaranteed failures.
 - For MCP servers, register tools through `McpServer.registerTool()` so the SDK advertises tool capability and wires `tools/list` and `tools/call` consistently.
+- If runtime code imports a package directly, declare it as a direct dependency even when a transitive copy is currently hoisted into `node_modules`.
