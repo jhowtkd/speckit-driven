@@ -149,6 +149,35 @@ function buildCursorGlobalManagedPaths(homeDir: string): string[] {
     .map((rel) => normalizeCursorRel(relative(homeDir, join(getCursorGlobalRulesDir(homeDir), rel))));
 }
 
+function buildCurrentCursorManagedEntries(): NonNullable<
+  GlobalInstallManifest["managedEntries"]
+> {
+  return {
+    mcpServers: Object.keys(CURSOR_GLOBAL_MCP_SERVERS).sort(),
+    hooks: Object.entries(CURSOR_GLOBAL_HOOKS)
+      .flatMap(([hookName, entries]) =>
+        entries.map((entry) => `${hookName}:${entry.command}`)
+      )
+      .sort(),
+  };
+}
+
+function parseCursorManagedHookRefs(hookRefs: string[]): Record<string, CursorHookEntry[]> {
+  const hooks: Record<string, CursorHookEntry[]> = {};
+  for (const hookRef of hookRefs) {
+    const separatorIndex = hookRef.indexOf(":");
+    if (separatorIndex === -1) {
+      continue;
+    }
+
+    const hookName = hookRef.slice(0, separatorIndex);
+    const command = hookRef.slice(separatorIndex + 1);
+    hooks[hookName] ??= [];
+    hooks[hookName].push({ command });
+  }
+  return hooks;
+}
+
 function normalizeCursorRel(value: string): string {
   return value.split("\\").join("/");
 }
@@ -165,14 +194,7 @@ function buildCursorGlobalManifest(options: {
       ...buildCursorGlobalManagedPaths(options.homeDir),
     ])
   ).sort();
-  const currentManagedEntries = {
-    mcpServers: Object.keys(CURSOR_GLOBAL_MCP_SERVERS).sort(),
-    hooks: Object.entries(CURSOR_GLOBAL_HOOKS)
-      .flatMap(([hookName, entries]) =>
-        entries.map((entry) => `${hookName}:${entry.command}`)
-      )
-      .sort(),
-  };
+  const currentManagedEntries = buildCurrentCursorManagedEntries();
   return {
     schemaVersion: 1,
     host: "cursor",
@@ -524,6 +546,8 @@ export function doctorCursorGlobalAdapter(options: {
     });
   }
 
+  const currentManagedEntries = buildCurrentCursorManagedEntries();
+
   try {
     const mcpConfig = readCursorSharedConfig(getCursorGlobalMcpPath(homeDir)) as {
       mcpServers?: Record<string, { command?: string; args?: string[] }>;
@@ -546,6 +570,19 @@ export function doctorCursorGlobalAdapter(options: {
         issues.push({
           kind: strictContent ? "error" : "warn",
           message: `Managed MCP server entry drifted: ${serverName}`,
+        });
+      }
+    }
+
+    for (const serverName of manifest.managedEntries?.mcpServers ?? []) {
+      if (currentManagedEntries.mcpServers.includes(serverName)) {
+        continue;
+      }
+      if (mcpServers[serverName]) {
+        unexpected.push(`.cursor/mcp.json#${serverName}`);
+        issues.push({
+          kind: "error",
+          message: `Historical managed MCP server entry still present: ${serverName}`,
         });
       }
     }
@@ -572,6 +609,33 @@ export function doctorCursorGlobalAdapter(options: {
             message: `Missing managed hook entry: ${hookName}:${entry.command}`,
           });
         }
+      }
+    }
+
+    for (const hookRef of manifest.managedEntries?.hooks ?? []) {
+      if (currentManagedEntries.hooks.includes(hookRef)) {
+        continue;
+      }
+
+      const separatorIndex = hookRef.indexOf(":");
+      if (separatorIndex === -1) {
+        unexpected.push(`.cursor/hooks.json#${hookRef}`);
+        issues.push({
+          kind: "error",
+          message: `Invalid managed hook ref in manifest: ${hookRef}`,
+        });
+        continue;
+      }
+
+      const hookName = hookRef.slice(0, separatorIndex);
+      const command = hookRef.slice(separatorIndex + 1);
+      const installedEntries = hooks[hookName] ?? [];
+      if (installedEntries.some((entry) => entry.command === command)) {
+        unexpected.push(`.cursor/hooks.json#${hookRef}`);
+        issues.push({
+          kind: "error",
+          message: `Historical managed hook entry still present: ${hookRef}`,
+        });
       }
     }
   } catch (error) {
@@ -622,11 +686,15 @@ export function uninstallCursorGlobalAdapter(options: { homeDir: string }): void
 
   removeCursorGlobalMcpFile({
     filePath: getCursorGlobalMcpPath(options.homeDir),
-    serverNames: Object.keys(CURSOR_GLOBAL_MCP_SERVERS),
+    serverNames:
+      manifest?.managedEntries?.mcpServers ?? Object.keys(CURSOR_GLOBAL_MCP_SERVERS),
   });
   removeCursorGlobalHooksFile({
     filePath: getCursorGlobalHooksPath(options.homeDir),
-    hooks: CURSOR_GLOBAL_HOOKS,
+    hooks:
+      manifest?.managedEntries?.hooks
+        ? parseCursorManagedHookRefs(manifest.managedEntries.hooks)
+        : CURSOR_GLOBAL_HOOKS,
   });
   deleteGlobalManifest({
     host: "cursor",

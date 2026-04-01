@@ -45,12 +45,12 @@ test("global Codex install writes the managed bundle and manifest", () => {
     const manifest = loadGlobalManifest({ host: "codex", homeDir });
     assert.ok(manifest);
     assert.deepEqual(manifest.managedPaths, [
+      ".codex/agents/verifier.toml",
+      ".codex/hooks.json",
+      ".codex/rules/default.rules",
       ".codex/skills/elf-review",
       ".codex/skills/elf-run",
       ".codex/skills/elf-verify",
-      ".codex/rules/default.rules",
-      ".codex/agents/verifier.toml",
-      ".codex/hooks.json",
     ]);
 
     const doctor = doctorCodexGlobalAdapter({
@@ -108,6 +108,35 @@ test("global Codex uninstall removes only ELF-managed files", () => {
     assert.equal(existsSync(join(getCodexGlobalRulesDir(homeDir), "default.rules")), false);
     assert.equal(existsSync(getCodexGlobalHooksPath(homeDir)), false);
     assert.equal(existsSync(getCodexGlobalManifestPath(homeDir)), false);
+  } finally {
+    rmSync(homeDir, { recursive: true, force: true });
+  }
+});
+
+test("global Codex update preserves historical ownership for uninstall", () => {
+  const homeDir = mkdtempSync(join(tmpdir(), "elf-codex-global-history-"));
+
+  try {
+    installCodexGlobalAdapter({ homeDir, force: false });
+
+    const retiredFile = join(getCodexGlobalRulesDir(homeDir), "retired.rules");
+    writeFileSync(retiredFile, "retired\n", "utf8");
+
+    const manifestPath = getCodexGlobalManifestPath(homeDir);
+    const manifest = JSON.parse(readFileSync(manifestPath, "utf8")) as {
+      managedPaths: string[];
+    };
+    manifest.managedPaths.push(".codex/rules/retired.rules");
+    writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\n");
+
+    updateCodexGlobalAdapter({ homeDir, force: false });
+
+    const updatedManifest = loadGlobalManifest({ host: "codex", homeDir });
+    assert.ok(updatedManifest);
+    assert.ok(updatedManifest.managedPaths.includes(".codex/rules/retired.rules"));
+
+    uninstallCodexGlobalAdapter({ homeDir });
+    assert.equal(existsSync(retiredFile), false);
   } finally {
     rmSync(homeDir, { recursive: true, force: true });
   }

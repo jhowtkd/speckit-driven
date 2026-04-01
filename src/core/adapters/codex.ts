@@ -338,13 +338,19 @@ function buildCodexGlobalManifest(options: {
   homeDir: string;
   assetsDir: string;
   installedAt?: string;
+  previousManifest?: GlobalInstallManifest | null;
 }): GlobalInstallManifest {
   const now = new Date().toISOString();
   return {
     schemaVersion: 1,
     host: "codex",
     elfVersion: readKitVersion(getPackageRoot()),
-    managedPaths: buildCodexGlobalManagedPaths(options.homeDir, options.assetsDir),
+    managedPaths: Array.from(
+      new Set([
+        ...(options.previousManifest?.managedPaths ?? []),
+        ...buildCodexGlobalManagedPaths(options.homeDir, options.assetsDir),
+      ])
+    ).sort(),
     installedAt: options.installedAt ?? now,
     updatedAt: now,
   };
@@ -616,6 +622,7 @@ export function updateCodexGlobalAdapter(options: {
     homeDir,
     assetsDir,
     installedAt: existingManifest?.installedAt,
+    previousManifest: existingManifest,
   });
   writeGlobalManifest({
     host: "codex",

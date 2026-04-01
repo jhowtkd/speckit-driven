@@ -197,6 +197,119 @@ test("global Cursor uninstall removes only ELF-managed entries and files", () =>
   }
 });
 
+test("global Cursor doctor and uninstall consume historical managed entries from the manifest", () => {
+  const homeDir = mkdtempSync(join(tmpdir(), "elf-cursor-global-history-"));
+
+  try {
+    mkdirSync(join(homeDir, ".cursor"), { recursive: true });
+    writeFileSync(
+      getCursorGlobalMcpPath(homeDir),
+      JSON.stringify(
+        {
+          mcpServers: {
+            existing: { command: "npx", args: ["existing-mcp"] },
+          },
+        },
+        null,
+        2
+      ) + "\n"
+    );
+    writeFileSync(
+      getCursorGlobalHooksPath(homeDir),
+      JSON.stringify(
+        {
+          version: 1,
+          hooks: {
+            beforeSubmitPrompt: [{ command: "existing-hook" }],
+          },
+        },
+        null,
+        2
+      ) + "\n"
+    );
+
+    installCursorGlobalAdapter({ homeDir, force: false });
+
+    writeFileSync(
+      getCursorGlobalMcpPath(homeDir),
+      JSON.stringify(
+        {
+          mcpServers: {
+            existing: { command: "npx", args: ["existing-mcp"] },
+            elf: { command: "elf", args: ["mcp", "serve"] },
+            "elf-legacy": { command: "elf", args: ["mcp", "serve", "--legacy"] },
+          },
+        },
+        null,
+        2
+      ) + "\n"
+    );
+    writeFileSync(
+      getCursorGlobalHooksPath(homeDir),
+      JSON.stringify(
+        {
+          version: 1,
+          hooks: {
+            beforeSubmitPrompt: [
+              { command: "existing-hook" },
+              { command: "elf doctor --strict" },
+              { command: "elf doctor --strict --legacy" },
+            ],
+            beforeMCPExecution: [
+              { command: "elf doctor --strict" },
+              { command: "elf doctor --strict --legacy" },
+            ],
+          },
+        },
+        null,
+        2
+      ) + "\n"
+    );
+
+    const manifestPath = getCursorGlobalManifestPath(homeDir);
+    const manifest = JSON.parse(readFileSync(manifestPath, "utf8")) as {
+      managedEntries?: Record<string, string[]>;
+    };
+    manifest.managedEntries = {
+      mcpServers: ["elf", "elf-legacy"],
+      hooks: [
+        "beforeMCPExecution:elf doctor --strict",
+        "beforeMCPExecution:elf doctor --strict --legacy",
+        "beforeSubmitPrompt:elf doctor --strict",
+        "beforeSubmitPrompt:elf doctor --strict --legacy",
+      ],
+    };
+    writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\n");
+
+    const doctor = doctorCursorGlobalAdapter({
+      homeDir,
+      strictContent: true,
+    });
+    assert.equal(doctor.ok, false);
+    assert.match(JSON.stringify(doctor.issues), /historical managed/i);
+
+    uninstallCursorGlobalAdapter({ homeDir });
+
+    const mcpConfig = JSON.parse(readFileSync(getCursorGlobalMcpPath(homeDir), "utf8")) as {
+      mcpServers: Record<string, { command: string }>;
+    };
+    assert.deepEqual(Object.keys(mcpConfig.mcpServers), ["existing"]);
+
+    const hooksConfig = JSON.parse(
+      readFileSync(getCursorGlobalHooksPath(homeDir), "utf8")
+    ) as {
+      hooks: Record<string, Array<{ command: string }>>;
+    };
+    assert.deepEqual(
+      hooksConfig.hooks.beforeSubmitPrompt.map((entry) => entry.command),
+      ["existing-hook"]
+    );
+    assert.equal(hooksConfig.hooks.beforeMCPExecution, undefined);
+  } finally {
+    rmSync(homeDir, { recursive: true, force: true });
+  }
+});
+
 test("global Cursor doctor fails when the legacy base rule remains", () => {
   const homeDir = mkdtempSync(join(tmpdir(), "elf-cursor-global-legacy-"));
 

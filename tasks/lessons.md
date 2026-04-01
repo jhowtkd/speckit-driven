@@ -24,3 +24,4 @@
 - Tests that assert validator output paths should normalize path separators before matching so Windows and POSIX output both pass.
 - When adding a new adapter branch to a shared command handler, keep the "unknown adapter" guard after the supported branches so the new path can actually execute.
 - For multi-root adapter bundles, treat any surviving bundle footprint as a valid update target; do not gate repair on a single subtree that may be missing during partial recovery.
+- When a global install manifest preserves historical ownership for future cleanup, both update and uninstall paths must consume that history; preserving it without using it just creates orphaned files and shared-config entries.
