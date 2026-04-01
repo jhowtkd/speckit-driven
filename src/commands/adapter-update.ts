@@ -31,6 +31,10 @@ export function runAdapterUpdate(
       for (const f of result.report.divergedSkipped) console.log(`  ! ${f}`);
       console.log("\n💡 Use --force to overwrite diverged files.");
     }
+    if (result.removedLegacy.length) {
+      console.log("\nRemoved legacy (.cursor, migration cleanup):");
+      for (const f of result.removedLegacy) console.log(`  - ${f}`);
+    }
 
     console.log("\n✅ Refreshed .cursor/spec-driven-kit.json");
 

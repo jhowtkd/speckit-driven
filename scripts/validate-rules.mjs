@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * Static checks for Project Rules under assets/cursor/rules.
+ * Static checks for Project Rules under the legacy Cursor bundle and the ELF
+ * Cursor adapter bundle.
  * Run: node scripts/validate-rules.mjs
  */
 import fs from "fs";
@@ -8,7 +9,10 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const rulesDir = path.resolve(__dirname, "..", "assets", "cursor", "rules");
+const rulesDirs = [
+  path.resolve(__dirname, "..", "assets", "cursor", "rules"),
+  path.resolve(__dirname, "..", "assets", "adapters", "cursor", "rules"),
+];
 
 const REQUIRED_PREFIXES = ["00", "10", "20", "30", "40", "50", "60"];
 
@@ -19,7 +23,7 @@ function frontmatterBlock(text) {
   return text.slice(4, end);
 }
 
-function main() {
+function validateRulesDir(rulesDir) {
   if (!fs.existsSync(rulesDir)) {
     console.error(`Missing rules directory: ${rulesDir}`);
     process.exit(1);
@@ -43,14 +47,14 @@ function main() {
 
   for (const p of REQUIRED_PREFIXES) {
     if (!byPrefix.has(p)) {
-      console.error(`Missing rule file with prefix ${p}-`);
+      console.error(`Missing rule file with prefix ${p}- in ${rulesDir}`);
       process.exit(1);
     }
   }
 
   const extra = [...byPrefix.keys()].filter((k) => !REQUIRED_PREFIXES.includes(k));
   if (extra.length) {
-    console.error(`Unexpected rule prefix(es): ${extra.join(", ")}`);
+    console.error(`Unexpected rule prefix(es) in ${rulesDir}: ${extra.join(", ")}`);
     process.exit(1);
   }
 
@@ -76,6 +80,12 @@ function main() {
   }
 
   console.log(`OK: ${REQUIRED_PREFIXES.length} rule files validated in ${rulesDir}`);
+}
+
+function main() {
+  for (const rulesDir of rulesDirs) {
+    validateRulesDir(rulesDir);
+  }
 }
 
 main();

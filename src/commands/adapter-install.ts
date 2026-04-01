@@ -32,6 +32,10 @@ export function runAdapterInstall(
       console.log("\nSkipped (.cursor, already exists; use --force to overwrite):");
       for (const f of result.report.skipped) console.log(`  = ${f}`);
     }
+    if (result.removedLegacy.length) {
+      console.log("\nRemoved legacy (.cursor, migration cleanup):");
+      for (const f of result.removedLegacy) console.log(`  - ${f}`);
+    }
 
     console.log("\n✅ Wrote .cursor/spec-driven-kit.json");
     console.log("\nNext steps:");

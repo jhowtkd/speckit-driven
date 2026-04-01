@@ -1,4 +1,4 @@
-import { existsSync } from "fs";
+import { existsSync, unlinkSync } from "fs";
 import { join } from "path";
 import { fileBuffersEqual, listFilesRecursive } from "../fs-utils";
 import { installBundleFiles, type InstallReport } from "../install-files";
@@ -7,12 +7,29 @@ import { getPackageRoot } from "../paths";
 import { readInstalledKitMeta, readKitVersion } from "../versioning";
 import type { DoctorIssue } from "../doctor-check";
 
+const LEGACY_CURSOR_ADAPTER_FILES = ["rules/00-using-spec-driven.mdc"];
+
 export type CursorAdapterDoctorReport = {
   ok: boolean;
   issues: DoctorIssue[];
   checkedFiles: number;
   missing: string[];
   mismatched: string[];
+  unexpected: string[];
+};
+
+export type CursorAdapterInstallResult = {
+  targetDir: string;
+  report: InstallReport;
+  kitVersion: string;
+  removedLegacy: string[];
+};
+
+export type CursorAdapterUpdateResult = {
+  targetDir: string;
+  report: UpdateReport;
+  kitVersion: string;
+  removedLegacy: string[];
 };
 
 export function getCursorAdapterAssetsDir(): string {
@@ -21,6 +38,24 @@ export function getCursorAdapterAssetsDir(): string {
 
 export function getCursorAdapterTargetDir(cwd: string): string {
   return join(cwd, ".cursor");
+}
+
+function removeLegacyCursorAdapterFiles(targetDir: string): string[] {
+  const removed: string[] = [];
+  for (const rel of LEGACY_CURSOR_ADAPTER_FILES) {
+    const filePath = join(targetDir, rel);
+    if (existsSync(filePath)) {
+      unlinkSync(filePath);
+      removed.push(rel);
+    }
+  }
+  return removed;
+}
+
+function findLegacyCursorAdapterFiles(targetDir: string): string[] {
+  return LEGACY_CURSOR_ADAPTER_FILES.filter((rel) =>
+    existsSync(join(targetDir, rel))
+  );
 }
 
 export function assertProjectRoot(
@@ -42,7 +77,7 @@ export function installCursorAdapter(options: {
   cwd: string;
   force: boolean;
   allowAnywhere: boolean;
-}): { targetDir: string; report: InstallReport; kitVersion: string } {
+}): CursorAdapterInstallResult {
   const { cwd, force, allowAnywhere } = options;
   assertProjectRoot(cwd, allowAnywhere, "elf adapter install cursor");
 
@@ -57,17 +92,18 @@ export function installCursorAdapter(options: {
     targetDir,
     force,
   });
+  const removedLegacy = removeLegacyCursorAdapterFiles(targetDir);
 
   const kitVersion = readKitVersion(getPackageRoot());
   writeKitMeta(targetDir, kitVersion);
 
-  return { targetDir, report, kitVersion };
+  return { targetDir, report, kitVersion, removedLegacy };
 }
 
 export function updateCursorAdapter(options: {
   cwd: string;
   force: boolean;
-}): { targetDir: string; report: UpdateReport; kitVersion: string } {
+}): CursorAdapterUpdateResult {
   const { cwd, force } = options;
   const targetDir = getCursorAdapterTargetDir(cwd);
   if (!existsSync(targetDir)) {
@@ -86,11 +122,12 @@ export function updateCursorAdapter(options: {
     targetCursorDir: targetDir,
     force,
   });
+  const removedLegacy = removeLegacyCursorAdapterFiles(targetDir);
 
   const kitVersion = readKitVersion(getPackageRoot());
   writeKitMeta(targetDir, kitVersion);
 
-  return { targetDir, report, kitVersion };
+  return { targetDir, report, kitVersion, removedLegacy };
 }
 
 export function doctorCursorAdapter(options: {
@@ -101,6 +138,7 @@ export function doctorCursorAdapter(options: {
   const issues: DoctorIssue[] = [];
   const missing: string[] = [];
   const mismatched: string[] = [];
+  const unexpected: string[] = [];
 
   const targetDir = getCursorAdapterTargetDir(cwd);
   if (!existsSync(targetDir)) {
@@ -108,7 +146,7 @@ export function doctorCursorAdapter(options: {
       kind: "error",
       message: "Missing .cursor/ — run elf adapter install cursor",
     });
-    return { ok: false, issues, checkedFiles: 0, missing, mismatched };
+    return { ok: false, issues, checkedFiles: 0, missing, mismatched, unexpected };
   }
 
   const meta = readInstalledKitMeta(targetDir);
@@ -126,7 +164,7 @@ export function doctorCursorAdapter(options: {
       kind: "error",
       message: `Missing adapter assets at ${assetsDir}`,
     });
-    return { ok: false, issues, checkedFiles: 0, missing, mismatched };
+    return { ok: false, issues, checkedFiles: 0, missing, mismatched, unexpected };
   }
 
   const relPaths = listFilesRecursive(assetsDir);
@@ -152,6 +190,14 @@ export function doctorCursorAdapter(options: {
     }
   }
 
+  for (const rel of findLegacyCursorAdapterFiles(targetDir)) {
+    unexpected.push(rel);
+    issues.push({
+      kind: "error",
+      message: `Legacy adapter file still present: .cursor/${rel}`,
+    });
+  }
+
   const ok = !issues.some((issue) => issue.kind === "error");
-  return { ok, issues, checkedFiles, missing, mismatched };
+  return { ok, issues, checkedFiles, missing, mismatched, unexpected };
 }

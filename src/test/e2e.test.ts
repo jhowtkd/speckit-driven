@@ -38,10 +38,20 @@ test("E2E CLI Flow", async (t) => {
   });
 
   await t.test("adapter install cursor --allow-anywhere", () => {
-    const out = runCmd("adapter install cursor --allow-anywhere");
+    const adapterCwd = mkdtempSync(join(tmpdir(), "elf-cursor-adapter-e2e-"));
+    t.after(() => rmSync(adapterCwd, { recursive: true, force: true }));
+    const out = execSync(`node "${binPath}" adapter install cursor --allow-anywhere`, {
+      cwd: adapterCwd,
+      encoding: "utf8",
+    });
     assert.match(out, /elf adapter install cursor/);
-    assert.ok(existsSync(join(cwd, ".cursor", "rules", "00-using-elf.mdc")));
-    assert.ok(existsSync(join(cwd, ".cursor", "commands", "spec-start.md")));
+    assert.ok(existsSync(join(adapterCwd, ".cursor", "rules", "00-using-elf.mdc")));
+    assert.ok(existsSync(join(adapterCwd, ".cursor", "commands", "spec-start.md")));
+    const doctorOut = execSync(`node "${binPath}" adapter doctor cursor --strict`, {
+      cwd: adapterCwd,
+      encoding: "utf8",
+    });
+    assert.match(doctorOut, /Result: OK/);
   });
 
   await t.test("init bootstraps elf runtime", () => {

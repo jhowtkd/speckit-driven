@@ -31,6 +31,10 @@ export function runAdapterDoctor(
     );
     for (const path of report.mismatched) console.log(`  ~ ${path}`);
   }
+  if (report.unexpected.length) {
+    console.log("\nUnexpected (legacy leftovers):");
+    for (const path of report.unexpected) console.log(`  - ${path}`);
+  }
   if (report.issues.length) {
     console.log("\nIssues:");
     for (const issue of report.issues) {
