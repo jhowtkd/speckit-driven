@@ -7,9 +7,9 @@
 
 ## CLI surface
 
-- **Primary runtime commands**: `init`, `run`, `resume`, `review`, `verify`, `mcp serve`.
+- **Primary runtime commands**: `init`, `run`, `resume`, `review`, `verify`, `doctor`, `mcp serve`.
 - **Adapter commands**: `adapter install`, `adapter update`, `adapter doctor` for `cursor` and `codex`.
-- **Legacy compatibility commands**: `install`, `update`, `doctor` remain available for the old Cursor-first bundle, but they are not the primary ELF workflow entrypoint.
+- **Legacy compatibility commands**: `install` and `update` remain available for the old Cursor-first bundle, but they are not the primary ELF workflow entrypoint.
 
 ## Runtime store
 
@@ -20,11 +20,12 @@
 ## Legacy compatibility store
 
 - The legacy Cursor-first bundle still uses `.cursor/spec-driven-kit.json` for compatibility metadata.
-- `install` / `update` / `doctor` continue to validate the legacy `.cursor/` payload and `AGENTS.md` for existing migrations.
+- `install` / `update` continue to manage the legacy `.cursor/` payload and `AGENTS.md` for existing migrations.
 
 ## Adapters
 
-- **Cursor adapter payload**: `assets/cursor/` installs to `.cursor/`.
+- **Cursor adapter payload**: `assets/adapters/cursor/` installs to `.cursor/`.
+- **Legacy Cursor bundle**: `assets/cursor/` remains the compatibility source for the older installer.
 - **Codex adapter payload**: `assets/adapters/codex/` installs to `.agents/`, `codex/`, and `.codex/`.
 - The adapter bundles are thin delivery surfaces; workflow semantics live in the ELF runtime.
 

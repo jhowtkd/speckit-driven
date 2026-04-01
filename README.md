@@ -39,12 +39,13 @@ npx elf-orchestrator mcp serve
 - `resume` reloads an existing run from disk.
 - `review` prints a review scaffold for a path or run id.
 - `verify` stores an independent verification result for a run.
+- `doctor` validates `.elf/` against the bundled runtime.
 - `mcp serve` exposes the local ELF runtime over MCP.
 - `adapter install`, `adapter update`, and `adapter doctor` manage the Cursor and Codex adapter bundles.
 
 ## Legacy compatibility
 
-The older `install`, `update`, and `doctor` commands remain available for existing Cursor-first projects. They manage the legacy `.cursor/` bundle and `AGENTS.md`; new work should prefer the ELF runtime commands above.
+The older `install` and `update` commands remain available for existing Cursor-first projects. They manage the legacy `.cursor/` bundle and `AGENTS.md`; `doctor` validates the ELF runtime after `elf init`, so new work should prefer the ELF runtime commands above.
 
 ## Compatibility matrix
 

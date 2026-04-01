@@ -13,6 +13,8 @@
 - A loader that points at missing or corrupted on-disk state must return `null` or fail loudly, never synthesize a plausible record from a pointer file.
 - Runtime commands must never create partial `.elf/` state; require a valid initialized runtime first or bootstrap all required runtime files before writing run state.
 - When keeping a legacy compatibility command during migration, keep its guidance consistent with the commands that actually exist so users are not sent into guaranteed failures.
+- Do not describe `doctor` as part of a legacy compatibility path once it only validates the new runtime; separate legacy installer guidance from runtime validation explicitly.
+- When documenting a new adapter surface, name the adapter asset tree that the implementation actually reads from, and call out any legacy bundle path separately.
 - For MCP servers, register tools through `McpServer.registerTool()` so the SDK advertises tool capability and wires `tools/list` and `tools/call` consistently.
 - If runtime code imports a package directly, declare it as a direct dependency even when a transitive copy is currently hoisted into `node_modules`.
 - For zero-input MCP tools, do not require `arguments: {}`; register them without an input schema and test `callTool({ name })` explicitly.
