@@ -40,3 +40,22 @@ test("elf init bootstraps the runtime store", () => {
     rmSync(cwd, { recursive: true, force: true });
   }
 });
+
+test("elf init fails cleanly outside a project root", () => {
+  const root = join(__dirname, "..", "..");
+  const binPath = join(root, "bin", "elf.js");
+  const cwd = mkdtempSync(join(tmpdir(), "elf-init-empty-"));
+
+  try {
+    const result = spawnSync(process.execPath, [binPath, "init"], {
+      cwd,
+      encoding: "utf8",
+    });
+
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /elf init: no \.git or package\.json/);
+    assert.doesNotMatch(result.stderr, /at .*\.ts|at .*\.js/);
+  } finally {
+    rmSync(cwd, { recursive: true, force: true });
+  }
+});

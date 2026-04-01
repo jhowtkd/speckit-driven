@@ -1,13 +1,23 @@
 import { getPackageRoot } from "../core/paths";
-import { bootstrapElfProject } from "../core/runtime/project-bootstrap";
+import {
+  bootstrapElfProject,
+  type RuntimeBootstrapReport,
+} from "../core/runtime/project-bootstrap";
 
 export function runInit(cwd: string, opts: { force: boolean; allowAnywhere: boolean }): void {
-  const report = bootstrapElfProject({
-    cwd,
-    force: opts.force,
-    allowAnywhere: opts.allowAnywhere,
-    packageRoot: getPackageRoot(),
-  });
+  let report: RuntimeBootstrapReport;
+  try {
+    report = bootstrapElfProject({
+      cwd,
+      force: opts.force,
+      allowAnywhere: opts.allowAnywhere,
+      packageRoot: getPackageRoot(),
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(message);
+    process.exit(1);
+  }
 
   console.log("elf init");
   console.log(`Target: ${report.runtimeDir}, ${report.stateMetaPath}`);
