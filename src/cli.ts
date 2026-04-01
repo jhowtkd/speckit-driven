@@ -10,6 +10,7 @@ import { runVerify } from "./commands/verify";
 import { runInstall } from "./commands/install";
 import { runDoctorCmd } from "./commands/doctor";
 import { runUpdate } from "./commands/update";
+import { runMcpServe } from "./commands/mcp-serve";
 
 const packageRoot = getPackageRoot();
 const version = readKitVersion(packageRoot);
@@ -97,6 +98,14 @@ program
       console.error(message);
       process.exit(1);
     }
+  });
+
+const mcp = program.command("mcp").description("Local MCP bridge commands");
+mcp
+  .command("serve")
+  .description("Start the local ELF MCP server")
+  .action(() => {
+    void runMcpServe();
   });
 
 installOpts(
