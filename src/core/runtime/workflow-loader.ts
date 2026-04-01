@@ -9,12 +9,7 @@ import {
   getAssetsElfTemplatesDir,
   getAssetsElfWorkflowsDir,
 } from "../paths";
-
-export type BundledWorkflowDefinition = {
-  id: string;
-  title?: string;
-  description?: string;
-};
+import type { WorkflowDefinition } from "./types";
 
 export type RuntimeTemplateMap = Record<string, string>;
 
@@ -22,14 +17,14 @@ function readJson<T>(filePath: string): T {
   return JSON.parse(readFileSync(filePath, "utf8")) as T;
 }
 
-export function loadBundledWorkflowDefinitions(): BundledWorkflowDefinition[] {
+export function loadBundledWorkflowDefinitions(): WorkflowDefinition[] {
   const workflowsDir = getAssetsElfWorkflowsDir();
   return ELF_WORKFLOW_IDS.map((id) => {
     const filePath = join(workflowsDir, `${id}.json`);
     if (!existsSync(filePath)) {
       throw new Error(`Missing bundled workflow definition: ${filePath}`);
     }
-    return readJson<BundledWorkflowDefinition>(filePath);
+    return readJson<WorkflowDefinition>(filePath);
   });
 }
 
