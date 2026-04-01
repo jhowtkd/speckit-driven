@@ -75,3 +75,48 @@ test("elf adapter install codex writes the Codex adapter bundle", () => {
     rmSync(cwd, { recursive: true, force: true });
   }
 });
+
+test("elf adapter update codex repairs a missing adapter subtree", () => {
+  const root = join(__dirname, "..", "..");
+  const binPath = join(root, "bin", "elf.js");
+  const cwd = mkdtempSync(join(tmpdir(), "elf-codex-adapter-update-"));
+
+  try {
+    const install = spawnSync(
+      process.execPath,
+      [binPath, "adapter", "install", "codex", "--allow-anywhere"],
+      { cwd, encoding: "utf8" }
+    );
+
+    assert.equal(install.status, 0, install.stderr ?? install.stdout);
+
+    rmSync(join(cwd, ".agents", "skills"), { recursive: true, force: true });
+
+    const update = spawnSync(
+      process.execPath,
+      [binPath, "adapter", "update", "codex"],
+      { cwd, encoding: "utf8" }
+    );
+
+    assert.equal(update.status, 0, update.stderr ?? update.stdout);
+    assert.match(update.stdout, /elf adapter update codex/);
+
+    assert.deepStrictEqual(
+      readdirSync(join(cwd, ".agents", "skills")).sort(),
+      ["elf-review", "elf-run", "elf-verify"]
+    );
+    assert.ok(existsSync(join(cwd, ".agents", "skills", "elf-run", "SKILL.md")));
+    assert.ok(existsSync(join(cwd, ".agents", "skills", "elf-review", "SKILL.md")));
+    assert.ok(existsSync(join(cwd, ".agents", "skills", "elf-verify", "SKILL.md")));
+
+    const doctor = spawnSync(
+      process.execPath,
+      [binPath, "adapter", "doctor", "codex", "--strict"],
+      { cwd, encoding: "utf8" }
+    );
+    assert.equal(doctor.status, 0, doctor.stderr ?? doctor.stdout);
+    assert.match(doctor.stdout, /Result: OK/);
+  } finally {
+    rmSync(cwd, { recursive: true, force: true });
+  }
+});

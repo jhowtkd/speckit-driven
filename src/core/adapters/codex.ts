@@ -210,6 +210,15 @@ function getCodexHooksTargetPath(cwd: string): string {
   return join(cwd, ".codex", "hooks.json");
 }
 
+function hasCodexAdapterFootprint(cwd: string): boolean {
+  return (
+    existsSync(getCodexSkillsTargetDir(cwd)) ||
+    existsSync(getCodexRulesTargetDir(cwd)) ||
+    existsSync(getCodexAgentsTargetDir(cwd)) ||
+    existsSync(getCodexHooksTargetPath(cwd))
+  );
+}
+
 export function installCodexAdapter(options: {
   cwd: string;
   force: boolean;
@@ -241,10 +250,9 @@ export function updateCodexAdapter(options: {
   force: boolean;
 }): CodexAdapterUpdateResult {
   const { cwd, force } = options;
-  const skillsTarget = getCodexSkillsTargetDir(cwd);
-  if (!existsSync(skillsTarget)) {
+  if (!hasCodexAdapterFootprint(cwd)) {
     throw new Error(
-      'elf adapter update codex: .agents/skills not found. Run "elf adapter install codex" first.'
+      'elf adapter update codex: no Codex adapter footprint found. Run "elf adapter install codex" first.'
     );
   }
 
