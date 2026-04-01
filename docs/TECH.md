@@ -9,6 +9,7 @@
 
 - **Primary runtime commands**: `init`, `run`, `resume`, `review`, `verify`, `doctor`, `mcp serve`.
 - **Adapter commands**: `adapter install`, `adapter update`, `adapter doctor` for `cursor` and `codex`.
+- **Global adapter commands**: `global install`, `global update`, `global doctor`, `global uninstall` for `cursor`, `codex`, and `all`.
 - **Legacy compatibility commands**: `install` and `update` remain available for the old Cursor-first bundle, but they are not the primary ELF workflow entrypoint.
 
 ## Runtime store
@@ -25,14 +26,23 @@
 ## Adapters
 
 - **Cursor adapter payload**: `assets/adapters/cursor/` installs to `.cursor/`.
+- **Cursor global payload**: global rules come from `assets/adapters/cursor/rules/` and merge into `~/.cursor/rules/`, `~/.cursor/mcp.json`, and `~/.cursor/hooks.json`.
 - **Legacy Cursor bundle**: `assets/cursor/` remains the compatibility source for the older installer.
 - **Codex adapter payload**: `assets/adapters/codex/` installs to `.agents/`, `codex/`, and `.codex/`.
+- **Codex global payload**: installs to `~/.codex/skills/`, `~/.codex/rules/`, `~/.codex/agents/`, and `~/.codex/hooks.json`.
 - The adapter bundles are thin delivery surfaces; workflow semantics live in the ELF runtime.
+
+## Global manifest ownership
+
+- **Codex global manifest**: `~/.codex/.elf-global.json`
+- **Cursor global manifest**: `~/.cursor/.elf-global.json`
+- These manifests track ELF-managed files and shared-config entries so `global update`, `global doctor`, and `global uninstall` stay ownership-aware.
 
 ## Doctor semantics
 
 - `elf doctor` validates `.elf/` against the bundled runtime.
 - `elf adapter doctor cursor|codex` validates the installed adapter bundle against its assets.
+- `elf global doctor cursor|codex|all` validates host-global integrations and warns when a project-local adapter is also present in the current working directory.
 - Missing files are errors; drift is warnings by default and failures under `--strict`.
 
 ## MCP bridge
